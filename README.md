@@ -2,11 +2,18 @@
 
 ## Installation
 
-```
+```sh
 $ git clone https://github.com/CSS-Org/CSS-Org.github.io.git
 $ cd CSS-Org.github.io
+$ git checkout -b working origin/working
 $ npm i
 $ hexo server
+```
+
+## Deploy
+
+```sh
+$ hexo deploy
 ```
 
 ## Documentation
