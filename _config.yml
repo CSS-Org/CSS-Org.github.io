@@ -71,7 +71,7 @@ theme: clean-blog-custom
 deploy:
   type: git
   repo: https://github.com/CSS-Org/CSS-Org.github.io.git
-  branch: gh-pages
+  branch: master
   message: publish content
   # name: CSS-Org
   # email: phiphi@coupang.com
