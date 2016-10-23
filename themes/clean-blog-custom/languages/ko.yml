@@ -1,5 +1,5 @@
 prev: 예전글
 next: 최신글
 comment: 댓글
-archive_a: Archives
-archive_b: "Archives: %s"
+archive_a: 아카이브
+archive_b: "아카이브: %s"

@@ -1,10 +1,27 @@
 # Header
 menu:
-  Home: /
-  Archives: /archives
-  Github:
-    url: https://github.com/CSS-Org/CSS-Org.github.io.git
-    icon: github
+  Home: '/'
+  Archives: '/archives'
+  # Home:
+  #   title: Home
+  #   url: /
+  #   icon: home
+  # About:
+  #   title: About
+  #   url: /about
+  #   icon: list-alt
+  # Archives:
+  #   title: Archives
+  #   url: /archives
+  #   icon: pencil
+  # Gitlab:
+  #   title: Gitlab
+  #   url: https://gitlab.coupang.net/phiphi
+  #   icon: gitlab
+  # Github:
+  #   title: Github
+  #   url: https://github.com/CSS-Org
+  #   icon: github
 
 # Title on top left of menu. Leave empty to use main blog title
 menu_title:
@@ -35,7 +52,7 @@ addthis:
 twitter_url:
 twitter_handle:
 facebook_url:
-github_url: https://github.com/klugjo/hexo-theme-clean-blog
-gitlab_url:
+github_url: https://github.com/CSS-Org
+gitlab_url: https://gitlab.coupang.net/phiphi
 linkedin_url:
-mailto:
+mailto: phiphi@coupang.com
