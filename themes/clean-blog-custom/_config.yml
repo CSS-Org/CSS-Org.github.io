@@ -2,6 +2,7 @@
 menu:
   Home: '/'
   Archives: '/archives'
+  RSS: /atom.xml
   # Home:
   #   title: Home
   #   url: /
@@ -14,6 +15,10 @@ menu:
   #   title: Archives
   #   url: /archives
   #   icon: pencil
+  # RSS:
+  #   title: RSS
+  #   url: /atom.xml
+  #   icon: rss
   # Gitlab:
   #   title: Gitlab
   #   url: https://gitlab.coupang.net/phiphi
