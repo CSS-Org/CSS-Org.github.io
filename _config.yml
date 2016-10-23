@@ -75,6 +75,10 @@ pagination_dir: page
 theme: clean-blog-custom
 # theme: hueman
 
+# pack
+html_minifier:
+  exclude:
+
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
