@@ -9,6 +9,15 @@ description: BartGod
 author: CS Tech Team
 language: ko
 timezone: Asia/Seoul
+type: blog
+image: /img/logo.jpg
+
+# SEO
+nofollow:
+  enable: true
+
+sitemap:
+  path: sitemap.xml
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
