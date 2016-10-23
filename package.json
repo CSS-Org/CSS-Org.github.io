@@ -2,6 +2,12 @@
   "name": "hexo-site",
   "version": "0.0.0",
   "private": true,
+  "scripts": {
+    "server" : "hexo server",
+    "clean" : "hexo clean",
+    "generate" : "hexo generate",
+    "deploy" : "npm run clean && hexo deploy"
+  },
   "hexo": {
     "version": "3.2.2"
   },
