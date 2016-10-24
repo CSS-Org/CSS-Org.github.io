@@ -55,6 +55,11 @@
 
             <!-- Post Main Content -->
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+
+                <div class="well">
+                  <strong>목차</strong>
+                  <%- toc(page.content, { class: 'content-index', list_number: false }) %>
+                </div>
                 <%- item.content %>
 
                 <% if(theme.addthis) { %>
