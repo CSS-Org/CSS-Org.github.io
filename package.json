@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "server": "hexo server",
     "clean": "hexo clean",
     "generate": "hexo generate",
+    "server": "npm run clean && hexo server",
     "deploy": "npm run clean && hexo deploy"
   },
   "hexo": {
