@@ -1,8 +1,10 @@
 ---
-title: 자바스크립트의 숫자 변환 이모저모
-subtitle: + 그럴듯해 보이는 코딩
+title: JS 숫자 변환 이모저모
 date: 2016-10-28 11:25:41
 tags: [javascript, parseInt, bitwise]
+author: javarouka
+email: javarouka@gmail.com
+cover: "/img/about-bg.jpg"
 ---
 
 ## js 의 숫자 변환
