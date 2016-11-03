@@ -45,7 +45,7 @@ tags: [no-developer, blog, newbee ]
 
 실제 출판물은
 
-<div style="background-color: #eee; padding: 10px; border: 1px solid #ddd;"><span style="font-weight: bold; fonr-size: 15px">소나기-황순원</span>
+<div style="background-color: #eee; padding: 10px; border: 1px solid #ddd;"><span style="font-weight: bold; fonr-size:200%">소나기-황순원</span>
 
 그러다가 소녀가 물 속에서 무엇을 하나 집어낸다. 하얀 조약돌이었다.
 
@@ -94,8 +94,24 @@ Hexo 로 정적 사이트를 생성해도 이것을 서비스해줄 서버가 �
 
 여기에 생성된 파일을 올리면 페이지를 서비스할 수 있다. 일단은 회원 가입부터 하자.
 
-[회원가입](https://github.com/join?source=header-home)
+[회원가입 링크](https://github.com/join?source=header-home)
 
-직접 가입하는 것보다 본인의 패이스북이나 구글 계정으로 가입하는 편이 편하다.
+![가입1](/img/github/step1.png)
 
-가입뒤에
+가입 폼 아이디가 도메인 주소가 되므로 신중하게 결정하는게 좋다.
+
+가령 superman 이 아이디라면 superman.github.io 가 도메인 이름이 된다.
+
+다음엔 서비스 선택인데, 무료로도 충분하며, 저장소의 카테고리까지 정하고 나면 완료.
+
+이제 페이지 서비스를 올릴 저장소를 생성해야 한다.
+
+![저장소 생성](/img/github/new repo.png)
+
+![저장소 생성](/img/github/new-repo-name.png)
+
+중요한건 저장소 이름을 만들 때 가급적 `아이디.github.io` 의 형식으로 만드는게 귀찮은 일이 줄어든다.
+
+여기까지 했다면 50%는 완료한 것이다.
+
+## 환경 설정하기
