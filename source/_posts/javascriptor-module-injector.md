@@ -158,9 +158,9 @@ var Milk = {
 Injector.register('coffee', Coffee);
 Injector.register('milk', Milk);
 
-function Cup(coffee, /**/milk) {
+function Cup(coffee, milk) {
     var me = "머그컵";
-    return Coffee.pour(me) + Milk.pour(me) + " 섞어";
+    return coffee.pour(me) + milk.pour(me) + " 섞어";
 }
 
 var drink = Injector.di(Cup);
