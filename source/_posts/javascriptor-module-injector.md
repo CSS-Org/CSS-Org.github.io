@@ -160,7 +160,7 @@ Injector.register('milk', Milk);
 
 function Cup(coffee, milk) {
     var me = "머그컵";
-    return coffee.pour(me) + milk.pour(me) + " 섞어";
+    return coffee.pour(me) + milk.pour(me) + " 섞어 마신다";
 }
 
 var drink = Injector.di(Cup);
