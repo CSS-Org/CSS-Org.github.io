@@ -1,5 +1,6 @@
 ---
 title: 블로그 글 쓰기
+date: 2016-10-01 11:25:41
 tags: [ document, start, writing, manual ]
 subtitle: 시작하기 전에 알이둘 지식들
 author: javarouka
