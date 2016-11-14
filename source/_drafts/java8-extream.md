@@ -8,13 +8,7 @@ author: javarouka
 
 ## 시작은 참 쉬웠다.
 
-타 언어로 작업하다가 java 로 작업하다보면 제일 답답한 부분은 역시 정적 타이핑 부분이다.
-
-물론 정적 타이핑은 장점이 많다. 무엇보다 정적에서 얻어지는 여러 이득은 규모가 커질수록 상당한 이점이 된다.
-
-하지만 그 이점이 지금의 답답함을 없애주진 않고 가끔은 정말 불필요한 부분에서조차, 고작 로직 한부분을 위해 주어진 인터페이스와 객체 생성을 해야하며 그 구현도 심히 장황하기 그지 없다는 생각이 들때가 많다.
-
-가령 [Spring Data JPA](http://projects.spring.io/spring-data-jpa/) 의 `Specification` 을 쓰다보면 자주 보는 다음과 같은 코드가 있다.
+[Spring Data JPA](http://projects.spring.io/spring-data-jpa/) 의 `Specification` 을 쓰다보면 자주 보는 다음과 같은 코드가 있다.
 
 ```java
 public class ContactInquiry {
@@ -56,3 +50,5 @@ public class ContactInquiry {
 아무튼 이러한 변화만으로 감격에 겨운 나머지 좀더 여러 부분에 적용해보려고 배고픈 하이에나에 빙의하여 프로젝트를 뒤지기 시작했다
 
 ## 다른 함수형 언어와 좀 다르다.
+
+blah blah

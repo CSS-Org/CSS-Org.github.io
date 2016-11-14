@@ -35,7 +35,8 @@ theme: [{root}/themes/테마디렉토리 에서 테마디렉토리명]
 ```
 
 > yml 파일이란?
-[YAML](https://ko.wikipedia.org/wiki/YAML). 일단은 '사람이 쉽게 읽을 수 있는' 데이터 직렬화 양식 이라고 한다...
+[위키백과:YAML](https://ko.wikipedia.org/wiki/YAML). 일단은 '사람이 쉽게 읽을 수 있는' 데이터 직렬화 양식 이라고 한다...
+JSON 과 유사하지만 bracket 대신 줄바꿈과 들여쓰기로 표현한다고 보면 얼추 정확하다.
 
 가령 theme/clean-blog 테마를 적용한다면
 
