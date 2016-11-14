@@ -3,7 +3,7 @@ title: JS 숫자 변환 이모저모
 subtitle: 트릭키한 방법들
 date: 2016-10-28 11:25:41
 tags: [javascript, parseInt, bitwise]
-author: javarouka
+author: javarouka(이항희)
 email: javarouka@gmail.com
 cover: "/img/about-bg.jpg"
 ---

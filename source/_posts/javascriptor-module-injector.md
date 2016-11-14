@@ -3,7 +3,7 @@ title: JavaScript Module Injector 만들기
 subtitle: 실용성은 없을것이다...개념이해 정도로..
 date: 2016-11-04 17:00:00
 tags: [javascript, di, module]
-author: javarouka
+author: javarouka(이항희)
 email: javarouka@gmail.com
 cover: "/img/about-bg.jpg"
 ---
