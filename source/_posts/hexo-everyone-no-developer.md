@@ -1,5 +1,6 @@
 ---
 title: 비개발자도 따라해보는 Hexo 로 페이지 만들기
+subtitle: 하지만 의욕은 준비하자.
 date: 2016-11-01 22:10:13
 tags: [no-developer, blog, newbee ]
 author: javarouka(이항희)

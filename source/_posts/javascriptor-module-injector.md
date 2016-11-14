@@ -1,5 +1,6 @@
 ---
 title: JavaScript Module Injector 만들기
+subtitle: 실용성은 없을것이다...개념이해 정도로..
 date: 2016-11-04 17:00:00
 tags: [javascript, di, module]
 author: javarouka
@@ -20,7 +21,7 @@ Java 등에서 쓰이는 Spring Framework에서는 ApplicationContext 에 빈을
 ## Function.toString
 
 JavaScript의 함수는 toString을 할 경우 함수의 소스코드를 문자열로 반환한다.
- 
+
 ```javascript
 function imFunction(you, say, ho) {
     console.log(you, say, ho);
@@ -42,7 +43,7 @@ document.getElementById('result').innerHTML = imFunction.toString();
 함수의 toString 결과를 함수의 이름, 인자, 몸체.이 셋으로 나눠볼 정규식을 만들어보자.
 
 (함수 몸체와 이름은 일단 쓸일이 없지만 후 확장을 위해 한번에 구해봤다..)
- 
+
 ```javascript
 var FN_PARSE = /^function\s*(\S+)[^\(]*\(\s*([^\)]*)\)\s*\{([\W\w]+)\}$/m
 ```
@@ -52,25 +53,25 @@ var FN_PARSE = /^function\s*(\S+)[^\(]*\(\s*([^\)]*)\)\s*\{([\W\w]+)\}$/m
 주의할 점이, 자바스크립트는 함수 인자 목록에도 주석을 사용할 수 있기에 자칫 주석으로 인자 이름을 잘못 가져올 수 있다.
 
 주석을 제거하는 정규표현식도 준비한다.
- 
+
 ```javascript
 var STRIP_COMMENT = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg
 ```
 
 그렇다면 적당한 함수를 하나 준비해본다
- 
+
 ```javascript
 function hello(man, to, women) {
     console.log(man + to + women);
 }
 ```
 
-파싱해보자. 
+파싱해보자.
 
 ```javascript
 var FN_PARSE = /^function\s*(\S+)[^\(]*\(\s*([^\)]*)\)\s*\{([\W\w]+)\}$/m,
     STRIP_COMMENT = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
-    
+
 function hello(man, to, women) {
     console.log(man + to + women);
 }
@@ -93,7 +94,7 @@ var parsed = hello.toString().match(FN_PARSE),
 
 
 일단 AMD 모듈이 아닌 일반적인 모듈로 구현해봤다.
- 
+
 ```javascript
 (function(ctx) {
 
@@ -141,7 +142,7 @@ var parsed = hello.toString().match(FN_PARSE),
 di 함수에서 대해 조금 설명하면, 함수를 먼저 분석기로 쪼개서 배열을 얻은 뒤, 인자 배열을 돌면서 등록된 모듈과 매치하는 배열을 생성한 뒤 wrap 하여 반환하는 방식이다.
 
 어디 잘 돌아가나 테스트.
- 
+
 ```javascript
 var Coffee = {
     pour: function(some) {

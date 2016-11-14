@@ -1,5 +1,6 @@
 ---
 title: JS 숫자 변환 이모저모
+subtitle: 트릭키한 방법들
 date: 2016-10-28 11:25:41
 tags: [javascript, parseInt, bitwise]
 author: javarouka
@@ -14,7 +15,7 @@ cover: "/img/about-bg.jpg"
 `parseInt` 와 `parseFloat` 는 이름 그대로의 기능을 한다
 
 ```javascript
-var num = "32.4" 
+var num = "32.4"
 parseInt(num); // 32
 parseFloat(num); // 32.4
 ```
@@ -22,7 +23,7 @@ parseFloat(num); // 32.4
 `Number` 도 일견 `parseFloat` 와 비슷하다. 히지만 세부 동작은 조금씩 다르다. 자세한건 아래에서 계속 이야기해보자.
 
 ```javascript
-var num = "32.4" 
+var num = "32.4"
 Number(num); // 32
 Number(num); // 32.4
 ```
@@ -82,14 +83,14 @@ parseFloat(Infinity) // Infinity
 정수형 변환일 불가능한 문자열이 있을 경우 `NaN` 이 반환된다
 
 ```javascript
-parseFloat("1a") // 1 
-Number("1a") // NaN 
+parseFloat("1a") // 1
+Number("1a") // NaN
 ```
 
 16진수 형식의 문자열일 경우 `parseFloat` 와는 다르게 해석이 가능하다
 
 ```javascript
-parseFloat("0x10") // 0 
+parseFloat("0x10") // 0
 Number("0x10") // 16
 ```
 
