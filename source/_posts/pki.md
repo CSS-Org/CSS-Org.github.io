@@ -3,6 +3,7 @@ layout: post
 title: "PKI - Public Key Interface"
 subtitle: PKI 에 대한 간단한 정리
 description: "PKI 에 대한 간단한 정리"
+author: javarouka(이항희)
 date: 2016-11-15
 tags: [ crypto, security ]
 comments: true
