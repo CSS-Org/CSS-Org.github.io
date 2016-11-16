@@ -2,6 +2,7 @@
 title: 동시성 환경에서 SimpleDateFormat 사용시 주의가 필요하다.
 date: 2016-11-16 11:22:37
 tags: [ java, concurrency ]
+author: seongminwoo
 ---
 
 ## 개요
