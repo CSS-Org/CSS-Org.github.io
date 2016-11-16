@@ -2,6 +2,8 @@
 title: 동시성 환경에서 SimpleDateFormat 사용시 주의가 필요하다.
 date: 2016-11-16 11:22:37
 tags: [ java, concurrency ]
+subtitle: "웹은 기본적으로 동시성을 기반으로 하지만 의외로 우리 개발자들은 동시성에 취약한 코드를 작성하곤 한다.
+     책에도 종종 소개되고 본인도 경험해본, 심지어 최근 회사 레거시 프로젝트 코드에서도 발견한 SimpleDateFormat 이슈를 간단히 소개해 본다."
 author: seongminwoo
 ---
 
