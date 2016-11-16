@@ -1,6 +1,7 @@
 ---
 title: 동시성 환경에서 SimpleDateFormat 사용시 주의가 필요하다.
 date: 2016-11-16 11:22:37
+subtitle: 숨겨진 가변 상태의 위험성
 tags: [ java, concurrency ]
 ---
 
