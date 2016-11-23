@@ -7,3 +7,7 @@ public
 .deploy*/
 npm-debug.log*
 .idea
+.idea/workspace.xml
+.yarn.lock
+CSS-Org.github.io.iml
+yarn.lock
