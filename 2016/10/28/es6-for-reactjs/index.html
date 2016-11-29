@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <meta name="description" content="ReactJS를 작성할 때에 알아두면 좋은 ES6 문법들block scope기존의 함수에 의한 스코프처럼 { }으로 감싼 내부에 별도의 스코프가 생성된다.
+123456789&amp;#123;  let a = 10;  &amp;#123;    let a = 20;    console.log(a);    // (1)  &amp;#125;  console.log(a);      //">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="ReactJS를 작성할 때에 알아두면 좋은 ES6 문법들">
+<meta property="og:url" content="https://CSS-Org.github.io/2016/10/28/es6-for-reactjs/">
+<meta property="og:site_name" content="CS Tech">
+<meta property="og:description" content="ReactJS를 작성할 때에 알아두면 좋은 ES6 문법들block scope기존의 함수에 의한 스코프처럼 { }으로 감싼 내부에 별도의 스코프가 생성된다.
+123456789&amp;#123;  let a = 10;  &amp;#123;    let a = 20;    console.log(a);    // (1)  &amp;#125;  console.log(a);      //">
+<meta property="og:image" content="https://CSS-Org.github.io/img/bart.png">
+<meta property="og:updated_time" content="2016-11-23T03:35:48.450Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ReactJS를 작성할 때에 알아두면 좋은 ES6 문법들">
+<meta name="twitter:description" content="ReactJS를 작성할 때에 알아두면 좋은 ES6 문법들block scope기존의 함수에 의한 스코프처럼 { }으로 감싼 내부에 별도의 스코프가 생성된다.
+123456789&amp;#123;  let a = 10;  &amp;#123;    let a = 20;    console.log(a);    // (1)  &amp;#125;  console.log(a);      //">
+<meta name="twitter:image" content="https://CSS-Org.github.io/img/bart.png">
+    <meta name="og:image:width" content="200">
+    <meta name="og:image:height" content="298">
+
+    <link rel="canonical" href="https://CSS-Org.github.io/2016/10/28/es6-for-reactjs/">
+    <link rel="alternate" href="https://CSS-Org.github.io/atom.xml" title="CS Tech">
+
+    <!-- Title -->
+    
+    <title>ReactJS를 작성할 때에 알아두면 좋은 ES6 문법들 - CS Tech</title>
+    <link href="/css/highlight.css" rel="stylesheet">
+
+    <!-- Bootstrap Core CSS -->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet">
+
+    <!-- Google Analytics -->
+    
+
+</head>
+
+<body>
+
+    <!-- Menu -->
+    <!-- 상단 메뉴 -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">CS Tech</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                
+                    <li>
+                        <a href="/">
+                            
+                                Home
+                            
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/archives">
+                            
+                                Archives
+                            
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/atom.xml">
+                            
+                                RSS
+                            
+                        </a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+</nav>
+
+    <!-- Main Content -->
+    <!-- Page Header -->
+<!-- Set your background image for this header in your post front-matter: cover -->
+
+<header class="intro-header" style="background-image: url('/img/logo.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>ReactJS를 작성할 때에 알아두면 좋은 ES6 문법들</h1>
+                    
+                    <span class="meta">
+                        <!-- Date and Author -->
+                        
+                            
+                            Posted by <a href="mailto:">gomugom</a> on
+                            
+                        
+                        2016-10-28
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Tags and categories -->
+           
+                <div class="col-lg-4 col-lg-offset-2 col-md-5 col-md-offset-1 post-tags">
+                    
+                        <a href="/tags/javascript-es6/">#javascript, es6</a>
+                    
+                </div>
+                <div class="col-lg-4 col-md-5 post-categories">
+                    
+                </div>
+            
+
+            <!-- Gallery -->
+            
+
+            <!-- Post Main Content -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+
+                <div class="well">
+                  <strong>목차</strong>
+                  <ol class="content-index"><li class="content-index-item content-index-level-1"><a class="content-index-link" href="#ReactJS를-작성할-때에-알아두면-좋은-ES6-문법들"><span class="content-index-text">ReactJS를 작성할 때에 알아두면 좋은 ES6 문법들</span></a><ol class="content-index-child"><li class="content-index-item content-index-level-2"><a class="content-index-link" href="#block-scope"><span class="content-index-text">block scope</span></a></li><li class="content-index-item content-index-level-2"><a class="content-index-link" href="#block-scoped-variables"><span class="content-index-text">block scoped variables</span></a><ol class="content-index-child"><li class="content-index-item content-index-level-4"><a class="content-index-link" href="#변수별-스코프-종속성"><span class="content-index-text">변수별 스코프 종속성</span></a></li></ol></li></ol></li><li class="content-index-item content-index-level-2"><a class="content-index-link" href="#arrow-function"><span class="content-index-text">arrow function</span></a></li><li class="content-index-item content-index-level-2"><a class="content-index-link" href="#rest-parameter"><span class="content-index-text">rest parameter</span></a></li><li class="content-index-item content-index-level-2"><a class="content-index-link" href="#spread-operator"><span class="content-index-text">spread operator</span></a></li><li class="content-index-item content-index-level-2"><a class="content-index-link" href="#default-parameter"><span class="content-index-text">default parameter</span></a></li><li class="content-index-item content-index-level-2"><a class="content-index-link" href="#Enhanced-Object-Literal"><span class="content-index-text">Enhanced Object Literal</span></a><ol class="content-index-child"><li class="content-index-item content-index-level-3"><a class="content-index-link" href="#computed-property-key"><span class="content-index-text">computed property key</span></a></li><li class="content-index-item content-index-level-3"><a class="content-index-link" href="#property-Shorthand"><span class="content-index-text">property Shorthand</span></a></li><li class="content-index-item content-index-level-3"><a class="content-index-link" href="#method-Shorthand"><span class="content-index-text">method Shorthand</span></a></li><li class="content-index-item content-index-level-3"><a class="content-index-link" href="#Object-assign-ES5"><span class="content-index-text">Object.assign (ES5)</span></a></li></ol></li><li class="content-index-item content-index-level-2"><a class="content-index-link" href="#template-literals"><span class="content-index-text">template literals</span></a></li><li class="content-index-item content-index-level-2"><a class="content-index-link" href="#class"><span class="content-index-text">class</span></a></li><li class="content-index-item content-index-level-2"><a class="content-index-link" href="#module-import-export"><span class="content-index-text">module - import / export</span></a><ol class="content-index-child"><li class="content-index-item content-index-level-3"><a class="content-index-link" href="#without-‘default’-export"><span class="content-index-text">without ‘default’ export</span></a></li><li class="content-index-item content-index-level-3"><a class="content-index-link" href="#with-‘default’-export"><span class="content-index-text">with ‘default’ export</span></a></li></ol></li></ol>
+                </div>
+                <h1 id="ReactJS를-작성할-때에-알아두면-좋은-ES6-문법들"><a href="#ReactJS를-작성할-때에-알아두면-좋은-ES6-문법들" class="headerlink" title="ReactJS를 작성할 때에 알아두면 좋은 ES6 문법들"></a>ReactJS를 작성할 때에 알아두면 좋은 ES6 문법들</h1><h2 id="block-scope"><a href="#block-scope" class="headerlink" title="block scope"></a>block scope</h2><p>기존의 함수에 의한 스코프처럼 <code>{ }</code>으로 감싼 내부에 별도의 스코프가 생성된다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="keyword">let</span> a = <span class="number">10</span>;</div><div class="line">  &#123;</div><div class="line">    <span class="keyword">let</span> a = <span class="number">20</span>;</div><div class="line">    <span class="built_in">console</span>.log(a);    <span class="comment">// (1)</span></div><div class="line">  &#125;</div><div class="line">  <span class="built_in">console</span>.log(a);      <span class="comment">// (2)</span></div><div class="line">&#125;</div><div class="line"><span class="built_in">console</span>.log(a);        <span class="comment">// (3)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> sum = <span class="number">0</span>;</div><div class="line"><span class="keyword">for</span>(<span class="keyword">let</span> j = <span class="number">1</span> ; j &lt;= <span class="number">10</span> ; j++)&#123;</div><div class="line">  sum += j;</div><div class="line">&#125;</div><div class="line"><span class="built_in">console</span>.log(sum);     <span class="comment">// (1)</span></div><div class="line"><span class="built_in">console</span>.log(j);       <span class="comment">// (2)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>(<span class="built_in">Math</span>.random() &lt; <span class="number">0.5</span>) &#123;</div><div class="line">  <span class="keyword">let</span> j = <span class="number">0</span>;</div><div class="line">  <span class="built_in">console</span>.log(j);     <span class="comment">// (1)</span></div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">  <span class="keyword">let</span> j = <span class="number">1</span>;</div><div class="line">  <span class="built_in">console</span>.log(j);     <span class="comment">// (2)</span></div><div class="line">&#125;</div><div class="line"><span class="built_in">console</span>.log(j);       <span class="comment">// (3)</span></div></pre></td></tr></table></figure>
+<h2 id="block-scoped-variables"><a href="#block-scoped-variables" class="headerlink" title="block scoped variables"></a>block scoped variables</h2><p><code>let</code>은 기존의 <code>var</code>를 대체하는 블락변수이고, <code>const</code>는 그 중 한 번 선언 및 정의되고 나면 값을 변경할 수 없는 변수이다.<br>블락 스코프 내부에서 선언된 <code>let</code>, <code>const</code>는 해당 스코프 내에서만 존재하며, 이들에 대해서는 ‘TDZ’가 존재한다.</p>
+<blockquote>
+<p><code>TDZ (temporal dead zone, 임시사각지대)</code> : 블락 스코프 내에서는 지역변수/상수에 대한 호이스팅이 이뤄지기는 하나, 선언된 위치 이전까지는 해당 변수/상수를 인식하지 못한다.</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">console</span>.log(a);    <span class="comment">// (1)</span></div><div class="line"><span class="keyword">let</span> a = <span class="number">2</span>;</div><div class="line"><span class="built_in">console</span>.log(a);    <span class="comment">// (2)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> a = <span class="number">10</span>;</div><div class="line"><span class="keyword">let</span> b = <span class="number">20</span>;</div><div class="line"><span class="built_in">console</span>.log(a, b);               <span class="comment">// (1)</span></div><div class="line"><span class="built_in">console</span>.log(<span class="built_in">window</span>.a, <span class="built_in">window</span>.b); <span class="comment">// (2)</span></div><div class="line"><span class="built_in">console</span>.log(<span class="keyword">this</span>.a, <span class="keyword">this</span>.b);     <span class="comment">// (3)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span>(<span class="keyword">let</span> j = <span class="number">0</span>; j &lt; <span class="number">5</span>; j++)&#123;</div><div class="line">  <span class="built_in">console</span>.log(j);</div><div class="line">&#125;</div><div class="line"><span class="built_in">console</span>.log(j);  <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> PI = <span class="number">3.141593</span>;</div><div class="line">PI = <span class="number">3.14</span>;         <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> OBJ = &#123;</div><div class="line">  <span class="attr">prop1</span> : <span class="number">1</span>,</div><div class="line">  <span class="attr">prop2</span> : [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>],</div><div class="line">  <span class="attr">prop3</span> : &#123;<span class="attr">a</span>: <span class="number">1</span>, <span class="attr">b</span>: <span class="number">2</span>&#125;</div><div class="line">&#125;;</div><div class="line"><span class="built_in">Object</span>.freeze(OBJ);</div><div class="line">OBJ.prop1 = <span class="number">3</span>;</div><div class="line">OBJ.prop2.push(<span class="number">5</span>);</div><div class="line">OBJ.prop3.b = <span class="number">3</span>;</div><div class="line"><span class="built_in">console</span>.log(OBJ);    <span class="comment">// (1)</span></div><div class="line"></div><div class="line"><span class="built_in">Object</span>.freeze(OBJ.prop2);</div><div class="line">OBJ.prop2.push(<span class="number">6</span>);</div><div class="line"><span class="built_in">console</span>.log(OBJ);    <span class="comment">// (2)</span></div></pre></td></tr></table></figure>
+<p><a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze" rel="external nofollow noopener noreferrer" target="_blank">링크 : Object.freeze 및 deep freezing</a></p>
+<h4 id="변수별-스코프-종속성"><a href="#변수별-스코프-종속성" class="headerlink" title="변수별 스코프 종속성"></a>변수별 스코프 종속성</h4><table>
+<thead>
+<tr>
+<th style="text-align:center">variables \ scope</th>
+<th style="text-align:center">function</th>
+<th style="text-align:center">block</th>
+<th style="text-align:center">hoisting</th>
+<th style="text-align:center">TDZ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">let</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">O</td>
+</tr>
+<tr>
+<td style="text-align:center">const</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">O</td>
+</tr>
+<tr>
+<td style="text-align:center">var</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">X</td>
+</tr>
+<tr>
+<td style="text-align:center">function declaration</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">△</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">X</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>함수선언문의 경우 sloppy-mode 모드에서는 block-scope의 영향을 받지 않고, strict-mode에서는 block-scope의 영향을 받는다.</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  foo();</div><div class="line">  <span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>)</span>&#123; <span class="built_in">console</span>.log(<span class="number">1</span>); &#125;</div><div class="line">  &#123;</div><div class="line">    foo();</div><div class="line">    <span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>)</span>&#123; <span class="built_in">console</span>.log(<span class="number">2</span>);&#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">foo();</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">'use strict'</span>;</div><div class="line">&#123;</div><div class="line">  foo();</div><div class="line">  <span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>)</span>&#123; <span class="built_in">console</span>.log(<span class="number">1</span>); &#125;</div><div class="line">  &#123;</div><div class="line">    foo();</div><div class="line">    <span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>)</span>&#123; <span class="built_in">console</span>.log(<span class="number">2</span>);&#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">foo();</div></pre></td></tr></table></figure>
+<h2 id="arrow-function"><a href="#arrow-function" class="headerlink" title="arrow function"></a>arrow function</h2><p>순수 함수로서의 기능만을 담당하기 위해 간소화한 함수.<br><code>=&gt;</code>의 좌측엔 매개변수, 우측엔 return될 내용을 기입한다. 우측이 여러줄로 이루어져있다면 <code>{ }</code>로 묶을 수 있으며, 이 경우엔 명시적으로 return을 기술하지 않으면 <code>undefined</code>가 반환된다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> getDate = <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">new</span> <span class="built_in">Date</span>();</div><div class="line"><span class="keyword">let</span> sum = <span class="function">(<span class="params">a, b</span>) =&gt;</span> a + b;</div><div class="line"><span class="keyword">let</span> getSquare = <span class="function"><span class="params">a</span> =&gt;</span> &#123; <span class="keyword">return</span> a * a; &#125;</div><div class="line"><span class="keyword">let</span> calc = <span class="function">(<span class="params">method, a, b</span>) =&gt;</span> &#123;</div><div class="line">  <span class="keyword">switch</span>(method) &#123;</div><div class="line">    <span class="keyword">case</span> <span class="string">'sum'</span>: <span class="keyword">return</span> a + b;</div><div class="line">    <span class="keyword">case</span> <span class="string">'sub'</span>: <span class="keyword">return</span> a - b;</div><div class="line">    <span class="keyword">case</span> <span class="string">'mul'</span>: <span class="keyword">return</span> a * b;</div><div class="line">    <span class="keyword">case</span> <span class="string">'div'</span>: <span class="keyword">return</span> a / b;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> <span class="literal">null</span>;</div><div class="line">&#125;</div><div class="line"><span class="built_in">console</span>.log(getDate());</div><div class="line"><span class="built_in">console</span>.log(sum(<span class="number">4</span>, <span class="number">5</span>));</div><div class="line"><span class="built_in">console</span>.log(getSquare(<span class="number">10</span>));</div><div class="line"><span class="built_in">console</span>.log(calc(<span class="string">'mul'</span>, <span class="number">3</span>, <span class="number">4</span>));</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> obj = &#123;</div><div class="line">  <span class="attr">grades</span>: [<span class="number">80</span>, <span class="number">90</span>, <span class="number">100</span>],</div><div class="line">  <span class="attr">getTotal</span>: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">this</span>.total = <span class="number">0</span>;</div><div class="line">    <span class="keyword">this</span>.grades.forEach(<span class="function"><span class="params">v</span> =&gt;</span> &#123;</div><div class="line">      <span class="keyword">this</span>.total += v;</div><div class="line">    &#125;);</div><div class="line">  &#125;</div><div class="line">&#125;;</div><div class="line">obj.getTotal();</div><div class="line"><span class="built_in">console</span>.log(obj.total);  <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<h2 id="rest-parameter"><a href="#rest-parameter" class="headerlink" title="rest parameter"></a>rest parameter</h2><ul>
+<li>함수 파라미터에 일정하지 않은 값들을 넘기고자 할 경우에 유용.</li>
+<li>arguments의 대체.</li>
+<li>배열의 얕은복사 목적으로 활용 가능.</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params">x, y, ...rest</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(rest);        <span class="comment">// (1)</span></div><div class="line">&#125;</div><div class="line">f(<span class="number">1</span>, <span class="number">2</span>, <span class="literal">true</span>, <span class="literal">null</span>, <span class="literal">undefined</span>, <span class="number">10</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> sum = <span class="function"><span class="keyword">function</span>(<span class="params">...arg</span>) </span>&#123;</div><div class="line">  <span class="keyword">let</span> result = <span class="number">0</span>;</div><div class="line">  <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; arg.length ; i++)&#123;</div><div class="line">    result += arg[i];</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> result;</div><div class="line">&#125;;</div><div class="line"><span class="comment">/* const sum = (...arg) =&gt; arg.reduce((p,c)=&gt; p+c); */</span></div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(sum(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>));  <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<h2 id="spread-operator"><a href="#spread-operator" class="headerlink" title="spread operator"></a>spread operator</h2><p>문자열의 각 단어, 배열의 요소들이나 객체의 프로퍼티들(stage-2 proposal)을 해체하여 여러개의 값으로 반환해준다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> str = <span class="string">'lorem ipsum'</span>;</div><div class="line"><span class="keyword">const</span> arr = [<span class="number">20</span>, <span class="number">10</span>, <span class="number">30</span>, <span class="number">40</span>, <span class="number">50</span>];</div><div class="line"><span class="built_in">console</span>.log(...arr);       <span class="comment">// (1)</span></div><div class="line"><span class="built_in">console</span>.log([...str]);     <span class="comment">// (2)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> originalArray = [<span class="number">1</span>, <span class="number">2</span>];</div><div class="line"><span class="keyword">const</span> copiedArray = [...originalArray];</div><div class="line"></div><div class="line">originalArray.push(<span class="number">3</span>);</div><div class="line"><span class="built_in">console</span>.log(originalArray);   <span class="comment">// (1)</span></div><div class="line"><span class="built_in">console</span>.log(copiedArray);     <span class="comment">// (2)</span></div></pre></td></tr></table></figure>
+<h2 id="default-parameter"><a href="#default-parameter" class="headerlink" title="default parameter"></a>default parameter</h2><p>파라미터에 값을 할당하지 않거나 빈 값인 상태로 함수를 호출할 경우, 해당 파라미터를 지정한 기본값으로 인식하도록 해줌.<br>각 파라미터는 내부에서 let과 동일하게 동작하며, 따라서 TDZ가 존재한다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params">x = <span class="number">1</span>, y = <span class="number">2</span>, z = <span class="number">3</span></span>)</span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(x, y, z);     <span class="comment">//(1)</span></div><div class="line">&#125;</div><div class="line">f(<span class="number">4</span>, <span class="literal">undefined</span>, <span class="number">5</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">multiply</span>(<span class="params">x = y * <span class="number">3</span>, y</span>)</span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(x * y);</div><div class="line">&#125;</div><div class="line">multiply(<span class="number">2</span>, <span class="number">3</span>);             <span class="comment">// (1)</span></div><div class="line">multiply(<span class="literal">undefined</span>, <span class="number">2</span>);     <span class="comment">// (2)</span></div></pre></td></tr></table></figure>
+<h2 id="Enhanced-Object-Literal"><a href="#Enhanced-Object-Literal" class="headerlink" title="Enhanced Object Literal"></a>Enhanced Object Literal</h2><h3 id="computed-property-key"><a href="#computed-property-key" class="headerlink" title="computed property key"></a>computed property key</h3><p>프로퍼티의 키값에 표현식을 지정할 수 있다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> suffix = <span class="string">' name'</span>;</div><div class="line"><span class="keyword">const</span> iu = &#123;</div><div class="line">  [<span class="string">'last'</span> + suffix] : <span class="string">'이'</span>,</div><div class="line">  [<span class="string">'first'</span> + suffix] : <span class="string">'지은'</span></div><div class="line">&#125;;</div><div class="line"><span class="built_in">console</span>.log(iu);    <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> foo = <span class="function">(<span class="params">(</span>) =&gt;</span> &#123;</div><div class="line">  <span class="keyword">let</span> count = <span class="number">0</span>;</div><div class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">    <span class="keyword">return</span> count++;</div><div class="line">  &#125;;</div><div class="line">&#125;)();</div><div class="line"></div><div class="line"><span class="keyword">const</span> obj = &#123;</div><div class="line">  [<span class="string">'bar'</span> + foo()] : foo(),</div><div class="line">  [<span class="string">'bar'</span> + foo()] : foo()</div><div class="line">&#125;;</div><div class="line"><span class="built_in">console</span>.log(obj);    <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<h3 id="property-Shorthand"><a href="#property-Shorthand" class="headerlink" title="property Shorthand"></a>property Shorthand</h3><p>프로퍼티의 키와 값에 할당한 변수명이 동일한 경우, 키를 생략할 수 있다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> x = <span class="number">10</span>, y = <span class="number">20</span>;</div><div class="line"><span class="keyword">const</span> obj = &#123;</div><div class="line">  x,</div><div class="line">  y</div><div class="line">&#125;;</div><div class="line"><span class="built_in">console</span>.log(obj);    <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">setInformation</span>(<span class="params">name, age, gender</span>)</span>&#123;</div><div class="line">  <span class="keyword">return</span> &#123;</div><div class="line">    name,</div><div class="line">    age,</div><div class="line">    gender</div><div class="line">  &#125;;</div><div class="line">&#125;</div><div class="line"><span class="keyword">const</span> iu = setInformation(<span class="string">'아이유'</span>, <span class="number">23</span>, <span class="string">'female'</span>);</div><div class="line"><span class="built_in">console</span>.log(iu);    <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<h3 id="method-Shorthand"><a href="#method-Shorthand" class="headerlink" title="method Shorthand"></a>method Shorthand</h3><p>메서드명 뒤의 <code>: function</code> 키워드를 생략할 수 있게 되었다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> obj = &#123;</div><div class="line">  <span class="attr">name</span> : <span class="string">'foo'</span>,</div><div class="line">  getName() &#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.name;</div><div class="line">  &#125;,</div><div class="line">  printName(name) &#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.getName());</div><div class="line">  &#125;</div><div class="line">&#125;;</div><div class="line"><span class="built_in">console</span>.log(obj.getName());    <span class="comment">// (1)</span></div><div class="line">obj.printName();               <span class="comment">// (2)</span></div></pre></td></tr></table></figure>
+<h3 id="Object-assign-ES5"><a href="#Object-assign-ES5" class="headerlink" title="Object.assign (ES5)"></a><code>Object.assign</code> (ES5)</h3><p><a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Object/assign" rel="external nofollow noopener noreferrer" target="_blank">Object.assign()</a><br>객체의 얕은복사를 수행한다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> originalObj = &#123;</div><div class="line">  <span class="attr">a</span>: <span class="number">1</span>,</div><div class="line">  <span class="attr">b</span>: [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>],</div><div class="line">  <span class="attr">c</span>: &#123; <span class="attr">d</span>: <span class="number">5</span>, <span class="attr">e</span>: <span class="number">6</span> &#125;</div><div class="line">&#125;;</div><div class="line"><span class="keyword">const</span> copiedObj = <span class="built_in">Object</span>.assign(&#123;&#125;, originalObj);</div><div class="line">copiedObj.a = <span class="number">11</span>;</div><div class="line">copiedObj.b[<span class="number">0</span>] = <span class="number">12</span>;</div><div class="line">copiedObj.c.d = <span class="number">13</span>;</div><div class="line"><span class="built_in">console</span>.log(originalObj, copiedObj);  <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> originalObj = &#123;</div><div class="line">  <span class="attr">a</span>: [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>],</div><div class="line">  <span class="attr">b</span>: &#123; <span class="attr">d</span>: <span class="number">5</span>, <span class="attr">e</span>: <span class="number">6</span> &#125;</div><div class="line">&#125;;</div><div class="line"><span class="keyword">const</span> copiedObj = <span class="built_in">Object</span>.assign(&#123;&#125;, originalObj, &#123; <span class="attr">b</span>: &#123; <span class="attr">f</span>: <span class="number">7</span>, <span class="attr">g</span>: <span class="number">8</span> &#125; &#125;);</div><div class="line"><span class="built_in">console</span>.log(copiedObj);   <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<h2 id="template-literals"><a href="#template-literals" class="headerlink" title="template literals"></a>template literals</h2><p>여러줄 문자열, 보간(표현식 삽입) 등을 지원하는 새로운 형태의 문자열.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">console</span>.log(<span class="string">`a</span></div><div class="line">bb</div><div class="line">ccc`);               <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> a = <span class="number">10</span>;</div><div class="line"><span class="keyword">const</span> b = <span class="number">20</span>;</div><div class="line"><span class="keyword">const</span> str = <span class="string">`<span class="subst">$&#123;a&#125;</span> + <span class="subst">$&#123;b&#125;</span> = <span class="subst">$&#123; a + b &#125;</span>`</span>;</div><div class="line"><span class="built_in">console</span>.log(str);    <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> characters = [&#123;</div><div class="line">  <span class="attr">name</span>: <span class="string">'Aria Stark'</span>,</div><div class="line">  <span class="attr">lines</span>: [<span class="string">'A girl has no name.'</span>]</div><div class="line">&#125;, &#123;</div><div class="line">  <span class="attr">name</span>: <span class="string">'John Snow'</span>,</div><div class="line">  <span class="attr">lines</span>: [</div><div class="line">    <span class="string">'You know nothing, John Snow.'</span>,</div><div class="line">    <span class="string">'Winter is coming.'</span></div><div class="line">  ]</div><div class="line">&#125;];</div><div class="line"><span class="keyword">const</span> html = characters.reduce(<span class="function">(<span class="params">prevCharacters, currentCaracter</span>) =&gt;</span> &#123;</div><div class="line">  <span class="keyword">const</span> &#123; name, lines &#125; = currentCaracter;</div><div class="line">  <span class="keyword">return</span> <span class="string">`<span class="subst">$&#123;prevCharacters&#125;</span>&lt;article&gt;</span></div><div class="line">  &lt;h1&gt;<span class="subst">$&#123;name&#125;</span>&lt;/h1&gt;</div><div class="line">  &lt;ul&gt;<span class="subst">$&#123;lines.reduce((prevLines, currentLine) =&gt;</span></div><div class="line">    <span class="string">`<span class="subst">$&#123;prevLines || <span class="string">''</span>&#125;</span></span></div><div class="line">    &lt;li&gt;<span class="subst">$&#123;currentLine&#125;</span>&lt;/li&gt;`</div><div class="line">  , <span class="string">''</span>)&#125;</div><div class="line">  &lt;/ul&gt;</div><div class="line">&lt;/article&gt;</div><div class="line">`&#125;, <span class="string">''</span>);</div><div class="line"><span class="built_in">console</span>.log(html);    <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<h2 id="class"><a href="#class" class="headerlink" title="class"></a>class</h2><p>Java의 그것과 비슷하지만 private 메서드가 없다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</div><div class="line">  <span class="keyword">constructor</span>(name, age) &#123;</div><div class="line">    <span class="keyword">this</span>.name = name;</div><div class="line">    <span class="keyword">this</span>.age = age;</div><div class="line">  &#125;</div><div class="line">  toString() &#123;</div><div class="line">    <span class="keyword">return</span> <span class="string">`<span class="subst">$&#123;<span class="keyword">this</span>.name&#125;</span>, <span class="subst">$&#123;<span class="keyword">this</span>.age&#125;</span>세`</span>;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">static</span> logNames(persons) &#123;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> person <span class="keyword">of</span> persons) &#123;</div><div class="line">      <span class="built_in">console</span>.log(person.name, person.age);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Employee</span> <span class="keyword">extends</span> <span class="title">Person</span> </span>&#123;</div><div class="line">  <span class="keyword">static</span> logNames(persons) &#123;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> person <span class="keyword">of</span> persons) &#123;</div><div class="line">      <span class="built_in">console</span>.log(person.name, person.age, person.title);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">constructor</span>(name, age, title) &#123;</div><div class="line">    <span class="keyword">super</span>(name, age);</div><div class="line">    <span class="keyword">this</span>.title = title;</div><div class="line">  &#125;</div><div class="line">  toString() &#123;</div><div class="line">    <span class="keyword">return</span> <span class="string">`<span class="subst">$&#123;<span class="keyword">super</span>.toString()&#125;</span>, (<span class="subst">$&#123;<span class="keyword">this</span>.title&#125;</span>)`</span>;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">const</span> park = <span class="keyword">new</span> Employee(<span class="string">'Park'</span>, <span class="number">35</span>, <span class="string">'CTO'</span>);</div><div class="line"><span class="keyword">const</span> jung = <span class="keyword">new</span> Employee(<span class="string">'Jung'</span>, <span class="number">30</span>, <span class="string">'CEO'</span>);</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(park.toString());       <span class="comment">// (1)</span></div><div class="line">Person.logNames([park, jung]);      <span class="comment">// (2)</span></div><div class="line">Employee.logNames([park, jung]);    <span class="comment">// (3)</span></div></pre></td></tr></table></figure>
+<h2 id="module-import-export"><a href="#module-import-export" class="headerlink" title="module - import / export"></a>module - import / export</h2><h3 id="without-‘default’-export"><a href="#without-‘default’-export" class="headerlink" title="without ‘default’ export"></a>without ‘default’ export</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//------ lib.js ------</span></div><div class="line"><span class="keyword">export</span> <span class="keyword">const</span> sqrt = <span class="built_in">Math</span>.sqrt;</div><div class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">square</span>(<span class="params">x</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> x * x;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//------ main.js ------</span></div><div class="line"><span class="keyword">import</span> * <span class="keyword">as</span> lib <span class="keyword">from</span> <span class="string">'./lib'</span>;</div><div class="line"><span class="built_in">console</span>.log(lib);             <span class="comment">// (1)</span></div><div class="line"><span class="built_in">console</span>.log(lib.square(<span class="number">5</span>));   <span class="comment">// (2)</span></div><div class="line"><span class="built_in">console</span>.log(lib.sqrt(<span class="number">4</span>));     <span class="comment">// (3)</span></div><div class="line"></div><div class="line"><span class="comment">/* or */</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> &#123; square, sqrt &#125; <span class="keyword">from</span> <span class="string">'./lib'</span>;</div><div class="line"><span class="built_in">console</span>.log(square(<span class="number">5</span>));       <span class="comment">// (4)</span></div><div class="line"><span class="built_in">console</span>.log(sqrt(<span class="number">4</span>));         <span class="comment">// (5)</span></div></pre></td></tr></table></figure>
+<h3 id="with-‘default’-export"><a href="#with-‘default’-export" class="headerlink" title="with ‘default’ export"></a>with ‘default’ export</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//------ lib.js ------</span></div><div class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">lib</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'this is lib default function'</span>);</div><div class="line">&#125;</div><div class="line"><span class="keyword">export</span> <span class="keyword">const</span> sqrt = <span class="built_in">Math</span>.sqrt;</div><div class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">square</span>(<span class="params">x</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> x * x;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//------ main.js ------</span></div><div class="line"><span class="keyword">import</span> * <span class="keyword">as</span> lib <span class="keyword">from</span> <span class="string">'./lib'</span>;</div><div class="line"><span class="built_in">console</span>.log(lib.default());   <span class="comment">// (1)</span></div><div class="line"><span class="built_in">console</span>.log(lib.square(<span class="number">5</span>));   <span class="comment">// (2)</span></div><div class="line"><span class="built_in">console</span>.log(lib.sqrt(<span class="number">4</span>));     <span class="comment">// (3)</span></div><div class="line"></div><div class="line"><span class="comment">/* or */</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> lib, &#123; square, sqrt &#125; <span class="keyword">from</span> <span class="string">'lib'</span>;</div><div class="line"><span class="built_in">console</span>.log(lib);             <span class="comment">// (4)</span></div><div class="line"><span class="built_in">console</span>.log(square(<span class="number">5</span>));       <span class="comment">// (5)</span></div><div class="line"><span class="built_in">console</span>.log(sqrt(<span class="number">4</span>));         <span class="comment">// (6)</span></div></pre></td></tr></table></figure>
+
+                
+            </div>
+
+            <!-- Comments -->
+            
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <hr>
+    <h3>댓글:</h3>
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+                </div>
+            
+        </div>
+    </div>
+</article>
+
+    <!-- Footer -->
+    <hr>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    
+
+                    
+
+                    
+                        <li>
+                            <a href="https://github.com/CSS-Org" target="_blank" rel="external nofollow noopener noreferrer">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    
+
+                    
+
+                    
+                        <li>
+                            <a href="http://gitlab.coupang.net/groups/phiphi" target="_blank" rel="external nofollow noopener noreferrer">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-gitlab fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    
+
+                    
+                        <li>
+                            <a href="mailto:phiphi@coupang.com" target="_blank" rel="external nofollow noopener noreferrer">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+                <p class="copyright text-muted">Original Theme <a target="_blank" href="http://startbootstrap.com/template-overviews/clean-blog/" rel="external nofollow noopener noreferrer">Clean Blog</a> from <a href="http://startbootstrap.com/" target="_blank" rel="external nofollow noopener noreferrer">Start Bootstrap</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+    <!-- After footer scripts -->
+    <!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Bootstrap -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Disqus Comments -->
+
+<script type="text/javascript">
+    var disqus_shortname = 'raopjs';
+
+    (function(){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+</body>
+
+</html>

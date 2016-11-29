@@ -1,0 +1,581 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>CS Tech</title>
+  <subtitle>CS Backoffice Tech Blog</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="https://CSS-Org.github.io/"/>
+  <updated>2016-11-29T08:17:31.541Z</updated>
+  <id>https://CSS-Org.github.io/</id>
+  
+  <author>
+    <name>CS Tech Team</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>ie에서 localstorage 사용할 때 유의점</title>
+    <link href="https://CSS-Org.github.io/2016/11/29/when-using-localstorage-within-the-ie/"/>
+    <id>https://CSS-Org.github.io/2016/11/29/when-using-localstorage-within-the-ie/</id>
+    <published>2016-11-28T15:00:00.000Z</published>
+    <updated>2016-11-29T08:17:31.541Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="갑자기-왜"><a href="#갑자기-왜" class="headerlink" title="갑자기 왜"></a>갑자기 왜</h3><p>로컬 스토리지를 사용해서, 페이지의 Form 값을 임시로 저장하는 기능을 개발했다.</p>
+<p>Chrome에서 만들어 테스트하고 배포를 하려던 참에,</p>
+<p>혹시나해서 IE(10,Edge 모드)에서 테스트하려고 보니까 왠일인지 동작하지 않았다.</p>
+<h3 id="두-창에서-Local-Storage-key값의-동기화-문제"><a href="#두-창에서-Local-Storage-key값의-동기화-문제" class="headerlink" title="두 창에서 Local Storage key값의 동기화 문제"></a>두 창에서 Local Storage key값의 동기화 문제</h3><p>Form은 팝업이였고, Form 값이 변경되면 로컬스토리지에 저장된 후</p>
+<p>다른 창에 떠있는 개인 페이지에서 임시저장된 Form 팝업을 링크하거나 삭제하는 식의 기능이였다.</p>
+<p>문제는 서로 다른 두 창에 대해서, 로컬스토리지의 key값이 동기화 되지 않는데서 시작했다.</p>
+<p>첫 번째 창에서 Storage에 저장하면, 두번째 창에서는 Storage를 읽고</p>
+<p>변경된 사항에 대해서 표현되어야 했으나 도무지 갱신된 key값을 다른 창에서 찾을 수가 없었다.</p>
+<p>예를 들어서, 두 창을 열어둔 후에, 첫번째 창에서 다음과 같이 localStorage에 Item을 추가해보자.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> ls = <span class="built_in">window</span>.localStorage;</div><div class="line"></div><div class="line">ls.setItem(<span class="string">'party'</span>, <span class="string">'yeah!'</span>);</div></pre></td></tr></table></figure>
+<p>헌데 두번째 창에서 localStorage에 저장된 key값을 확인해보면, 첫번째 창과 key값이 동일하지 않다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> ls2 = <span class="built_in">window</span>.localStorage;</div><div class="line"></div><div class="line"><span class="built_in">Object</span>.keys(ls2);</div></pre></td></tr></table></figure>
+<h3 id="어떻게-해야할까"><a href="#어떻게-해야할까" class="headerlink" title="어떻게 해야할까"></a>어떻게 해야할까</h3><p>사용자 PC마다 localStorage를 얼마나 사용하고 있는지 알 수 없었기에,</p>
+<p>키값으로 미리 데이터를 필터링해서 사용하지 않으면</p>
+<p>어떤 성능 상 이슈가 발생할 지 알 수 없는 상황이였다.</p>
+<p>localStorage를 이것 저것 사용해보다가 한가지 대안이라고 하기에도 민망한 방법을 발견했는데</p>
+<p><strong> 창이 다르더라도 getItem(key)를 통해서 바로 호출하면, 데이터를 가져올 수 있었다 </strong></p>
+<p>ls2 내부를 아무리 찾아봐도 없던 ‘party’ 데이터가 key값으로 바로 호출하면 보인다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ls2.getItem(<span class="string">'party'</span>);</div></pre></td></tr></table></figure>
+<p>이렇게해서, IE인 경우에, 서로 다른 창에서 localStorage를 사용할 경우, 동기화된 Key값을 얻기 위해</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>(browserDetector.detectWindow(<span class="built_in">window</span>).browser === <span class="string">'ie'</span>) &#123;</div><div class="line">	keys = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">		<span class="keyword">let</span> idx = <span class="number">0</span>;</div><div class="line">		<span class="keyword">let</span> result = [];</div><div class="line">		<span class="keyword">while</span> (l.key(idx)) &#123;</div><div class="line">			result.push(l.key(idx));</div><div class="line">			idx++;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> result;</div><div class="line">	&#125;;</div><div class="line">	<span class="keyword">return</span> keys();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>localStorage에 존재하지 않는 index를 요청할 때, null을 리턴하는 것을 이용해서</p>
+<p>다음과 같이 key값을 빼서 사용하게 되었다.</p>
+<h3 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h3><p>개발 환경과 사용자 환경에 대한 테스트의 중요성을 다시 한번 느낀다.</p>
+<p>잘되겠지 싶은 것도 반드시 사용자 환경에서 다시 한번 테스트 해봐야 겠다.</p>]]></content>
+    
+    <summary type="html">
+    
+      ie에서 localstorage 사용기
+    
+    </summary>
+    
+      <category term="Tech" scheme="https://CSS-Org.github.io/categories/tech/"/>
+    
+    
+      <category term="ie" scheme="https://CSS-Org.github.io/tags/ie/"/>
+    
+      <category term="localstorage" scheme="https://CSS-Org.github.io/tags/localstorage/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>ES6 Class에서 private member를 정의하는 방법</title>
+    <link href="https://CSS-Org.github.io/2016/11/27/how-to-make-private-member/"/>
+    <id>https://CSS-Org.github.io/2016/11/27/how-to-make-private-member/</id>
+    <published>2016-11-27T08:34:00.000Z</published>
+    <updated>2016-11-29T08:17:31.531Z</updated>
+    
+    <content type="html"><![CDATA[<p>es6의 class 문법에는 private data를 직접 지정할 수 있는 기능이 제공되지 않는다.<br>때문에 private data로 쓰고자 하는 변수는 우회적으로 관리하여야 하는데, 그 방법들을 소개한다.</p>
+<a id="more"></a>
+<hr>
+<h2 id="1-naming-convention"><a href="#1-naming-convention" class="headerlink" title="1. naming convention _"></a>1. naming convention <code>_</code></h2><p>변수에 접두어 <code>_</code>를 붙이면 private data로 간주하기로 하는 규칙을 정하는 방법.</p>
+<p>실질적인 접근제한은 전혀 이뤄지지 않는다.</p>
+<h2 id="2-constructor-내부에서-할당"><a href="#2-constructor-내부에서-할당" class="headerlink" title="2. constructor 내부에서 할당"></a>2. <code>constructor</code> 내부에서 할당</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Count</span> </span>&#123;</div><div class="line">  <span class="keyword">constructor</span>(_count) &#123;</div><div class="line">    <span class="keyword">const</span> methods = &#123;</div><div class="line">      inc() &#123; _count += <span class="number">1</span>; <span class="keyword">return</span> _count; &#125;,</div><div class="line">      dec() &#123; _count -= <span class="number">1</span>; <span class="keyword">return</span> _count; &#125;,</div><div class="line">      getScore() &#123; <span class="keyword">return</span> _count; &#125;,</div><div class="line">      get score() &#123; <span class="keyword">return</span> _count; &#125;,</div><div class="line">      set score(v) &#123; _count = v; &#125;</div><div class="line">    &#125;;</div><div class="line">    <span class="built_in">Object</span>.assign(<span class="keyword">this</span>, methods);</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">const</span> test = <span class="keyword">new</span> Count(<span class="number">0</span>);</div><div class="line"><span class="built_in">console</span>.log(test.inc());        <span class="comment">// 1</span></div><div class="line"><span class="built_in">console</span>.log(test.inc());        <span class="comment">// 2</span></div><div class="line"><span class="built_in">console</span>.log(test.dec());        <span class="comment">// 1</span></div><div class="line"><span class="built_in">console</span>.log(test.getScore());   <span class="comment">// 1</span></div></pre></td></tr></table></figure>
+<p>이 방법은 constructor 내부에서만 접근 가능한 변수를 사용하는 모든 메소드를 constructor에서 정의하고,<br>이를 그대로 인스턴스에 반영하기 위해 <code>Object.assign</code> 메소드를 활용한다.<br>이로써 <code>_count</code> 변수는 값을 외부에 노출하지 않고 오직 내부에서만 접근이 가능해진다.</p>
+<p>그러나 이는 메소드를 인스턴스에 직접 할당하는 것이므로,<br>메소드를 상속받아 사용하겠다는 Class의 본질적인 사용 의미를 무색케 만드는 셈이다.<br>또한 delete로 메소드를 삭제할 수도 있고, 메소드를 override가 아닌 완전한 대체를 할 수도 있다.</p>
+<p>뿐만 아니라  <code>getter/setter</code>는 별도의 데이터(<code>this.score</code>)에 접근하는 등의 문제도 있다<br>(원인은 모르겠다. 아시는 분은 댓글 부탁드립니다).</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">console</span>.log(test.score);         <span class="comment">// 0</span></div><div class="line">test.score = <span class="number">20</span>;</div><div class="line"><span class="built_in">console</span>.log(test.score);         <span class="comment">// 20</span></div><div class="line"><span class="built_in">console</span>.log(test.getScore());    <span class="comment">// 1</span></div></pre></td></tr></table></figure>
+<p>한편 method를 모두 <code>this.constructor.prototype</code>에 할당한다면 _count 변수를 공통으로 사용하는 결과가 되므로,<br>각 인스턴스들의 독립성이 보장되지 않게 되어 마찬가지로 Class를 사용하는 의미가 없다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Count</span> </span>&#123;</div><div class="line">  <span class="keyword">constructor</span>(_count) &#123;</div><div class="line">    <span class="keyword">const</span> methods = &#123;</div><div class="line">      inc() &#123; _count += <span class="number">1</span>; <span class="keyword">return</span> _count; &#125;,</div><div class="line">      dec() &#123; _count -= <span class="number">1</span>; <span class="keyword">return</span> _count; &#125;,</div><div class="line">      getScore() &#123; <span class="keyword">return</span> _count; &#125;,</div><div class="line">      get score() &#123; <span class="keyword">return</span> _count; &#125;,</div><div class="line">      set score(v) &#123; _count = v; &#125;</div><div class="line">    &#125;;</div><div class="line">    <span class="built_in">Object</span>.assign(<span class="keyword">this</span>.constructor.prototype, methods);</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">const</span> test1 = <span class="keyword">new</span> Count(<span class="number">0</span>);</div><div class="line"><span class="keyword">const</span> test2 = <span class="keyword">new</span> Count(<span class="number">0</span>);</div><div class="line"><span class="built_in">console</span>.log(test1.inc());        <span class="comment">// 1</span></div><div class="line"><span class="built_in">console</span>.log(test1.inc());        <span class="comment">// 2</span></div><div class="line"><span class="built_in">console</span>.log(test1.getScore());   <span class="comment">// 2</span></div><div class="line"><span class="built_in">console</span>.log(test2.getScore());   <span class="comment">// 2</span></div></pre></td></tr></table></figure>
+<p>이래저래 변수보호를 위해 잃는 것이 너무 많은 방법. 비추천.</p>
+<h2 id="3-Symbol-활용"><a href="#3-Symbol-활용" class="headerlink" title="3. Symbol 활용"></a>3. <code>Symbol</code> 활용</h2><p>즉시실행함수 혹은 블록 스코프 내에서 심볼을 통해 접근을 제한하는 방법이다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> Count = <span class="function">(<span class="params">(</span>) =&gt;</span> &#123;</div><div class="line">  <span class="keyword">const</span> count = <span class="built_in">Symbol</span>(<span class="string">'COUNT'</span>);</div><div class="line">  <span class="class"><span class="keyword">class</span> <span class="title">Count</span> </span>&#123;</div><div class="line">    <span class="keyword">constructor</span>() &#123;</div><div class="line">      <span class="keyword">this</span>[count] = <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line">    inc() &#123;</div><div class="line">      <span class="keyword">return</span> ++<span class="keyword">this</span>[count];</div><div class="line">    &#125;</div><div class="line">    dec() &#123;</div><div class="line">      <span class="keyword">return</span> --<span class="keyword">this</span>[count];</div><div class="line">    &#125;</div><div class="line">    get score() &#123; <span class="keyword">return</span> <span class="keyword">this</span>[count]; &#125;</div><div class="line">    set score(n) &#123; <span class="keyword">this</span>[count] = n; &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> Count;</div><div class="line">&#125;)();</div><div class="line"><span class="keyword">const</span> test = <span class="keyword">new</span> Count();</div><div class="line"><span class="built_in">console</span>.log(test.inc());   <span class="comment">// 1</span></div><div class="line"><span class="built_in">console</span>.log(test.inc());   <span class="comment">// 2</span></div><div class="line"><span class="built_in">console</span>.log(test.dec());   <span class="comment">// 1</span></div><div class="line"><span class="built_in">console</span>.log(test.score);   <span class="comment">// 1</span></div><div class="line">test.score = <span class="number">10</span>;</div><div class="line"><span class="built_in">console</span>.log(test.score);   <span class="comment">// 10</span></div><div class="line"><span class="built_in">console</span>.log(test.inc());   <span class="comment">// 11</span></div></pre></td></tr></table></figure>
+<p>이 방법은 Symbol의 접근 루트가 제한적이라서 가능한 방법이지만, 접근 루트가 아예 없는 것은 아니다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> testSymbol = <span class="built_in">Object</span>.getOwnPropertySymbols(test)[<span class="number">0</span>];</div><div class="line">test[testSymbol] = <span class="number">20</span>;</div><div class="line"><span class="built_in">console</span>.log(test.score);    <span class="comment">// 20</span></div><div class="line"><span class="built_in">console</span>.log(test.inc());    <span class="comment">// 21</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> testSymbol = <span class="built_in">Reflect</span>.ownKeys(test)[<span class="number">0</span>];</div><div class="line">test[testSymbol] = <span class="number">20</span>;</div><div class="line"><span class="built_in">console</span>.log(test.score);    <span class="comment">// 20</span></div><div class="line"><span class="built_in">console</span>.log(test.dec());    <span class="comment">// 19</span></div></pre></td></tr></table></figure>
+<p>비록 완벽한 private member가 되진 않지만, 위와 같은 몇 가지 접근을 제외하고는 다른 모든 접근으로부터는 보호되므로<br>절대적인 보호가 필요한 경우가 아닌 한 적절하게 활용하기 좋은 방법이라 하겠다.</p>
+<h2 id="4-WeakMap-활용"><a href="#4-WeakMap-활용" class="headerlink" title="4. WeakMap 활용"></a>4. <code>WeakMap</code> 활용</h2><p>weakMap의 key에는 오직 참조형 데이터만을 지정할 수 있으며, 이 키값을 정확히 알고 있을 때에만<br>해당 프로퍼티의 값을 받아올 수 있다는 점을 이용한 방법이다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> Count = <span class="function">(<span class="params">(</span>) =&gt;</span> &#123;</div><div class="line">  <span class="keyword">const</span> count = &#123;<span class="attr">COUNT</span>: <span class="string">'COUNT'</span>&#125;;</div><div class="line">  <span class="class"><span class="keyword">class</span> <span class="title">Count</span> </span>&#123;</div><div class="line">    <span class="keyword">constructor</span>() &#123;</div><div class="line">      <span class="keyword">this</span>.map = <span class="keyword">new</span> <span class="built_in">WeakMap</span>([[count, <span class="number">0</span>]]);</div><div class="line">    &#125;</div><div class="line">    inc() &#123;</div><div class="line">      <span class="keyword">return</span> <span class="keyword">this</span>.map.set(count, <span class="keyword">this</span>.map.get(count) + <span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line">    dec() &#123;</div><div class="line">      <span class="keyword">return</span> <span class="keyword">this</span>.map.set(count, <span class="keyword">this</span>.map.get(count) - <span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line">    get score() &#123; <span class="keyword">return</span> <span class="keyword">this</span>.map.get(count); &#125;</div><div class="line">    set score(n) &#123; <span class="keyword">this</span>.map.set(count, n); &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> Count;</div><div class="line">&#125;)();</div><div class="line"><span class="keyword">const</span> test = <span class="keyword">new</span> Count();</div><div class="line"><span class="built_in">console</span>.log(test.inc());    <span class="comment">// WeakMap &#123;Object &#123;COUNT: "COUNT"&#125; =&gt; 1&#125;</span></div><div class="line"><span class="built_in">console</span>.log(test.inc());    <span class="comment">// WeakMap &#123;Object &#123;COUNT: "COUNT"&#125; =&gt; 2&#125;</span></div><div class="line"><span class="built_in">console</span>.log(test.dec());    <span class="comment">// WeakMap &#123;Object &#123;COUNT: "COUNT"&#125; =&gt; 1&#125;</span></div><div class="line"><span class="built_in">console</span>.log(test.score);    <span class="comment">// 1</span></div><div class="line">test.score = <span class="number">10</span>;</div><div class="line"><span class="built_in">console</span>.log(test.score);    <span class="comment">// 10</span></div><div class="line"><span class="built_in">console</span>.log(test.dec());    <span class="comment">// WeakMap &#123;Object &#123;COUNT: "COUNT"&#125; =&gt; 9&#125;</span></div></pre></td></tr></table></figure>
+<p>WeakMap 활용법은 private member를 구현하는 가장 완벽한 방법이지만,<br>오직 WeakMap용 method만을 이용할 수 있다는 단점이 있다.</p>
+<h2 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h2><p>ES6 Class 내부에서 private 변수를 할당할 명시적인 방법이 없어, 이를 우회적으로 구현하기 위한 다양한 방법을 살펴보았다.<br>무엇 하나 ‘이거다’ 싶은 방법은 없지만, Symbol, WeakMap을 이용한 방법은 아쉬운 대로 써먹어볼 만 할 것 같다.</p>
+<p>참고 : <a href="http://exploringjs.com/es6/ch_classes.html#sec_private-data-for-classes" rel="external nofollow noopener noreferrer" target="_blank">Exploring ES6</a></p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;es6의 class 문법에는 private data를 직접 지정할 수 있는 기능이 제공되지 않는다.&lt;br&gt;때문에 private data로 쓰고자 하는 변수는 우회적으로 관리하여야 하는데, 그 방법들을 소개한다.&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="es6" scheme="https://CSS-Org.github.io/tags/es6/"/>
+    
+      <category term="javascript" scheme="https://CSS-Org.github.io/tags/javascript/"/>
+    
+      <category term="class" scheme="https://CSS-Org.github.io/tags/class/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>동시성 환경에서 SimpleDateFormat 사용시 주의가 필요하다.</title>
+    <link href="https://CSS-Org.github.io/2016/11/16/dangerous-simpledateformat/"/>
+    <id>https://CSS-Org.github.io/2016/11/16/dangerous-simpledateformat/</id>
+    <published>2016-11-16T02:22:37.000Z</published>
+    <updated>2016-11-23T03:35:48.439Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="개요"><a href="#개요" class="headerlink" title="개요"></a>개요</h2><p>웹은 기본적으로 동시성을 기반으로 하지만 의외로 우리 개발자들은 동시성에 취약한 코드를 작성하곤 한다.<br>책에도 종종 소개되고 본인도 경험해본, 심지어 최근 회사 레거시 프로젝트 코드에서도 발견한 SimpleDateFormat 이슈를 간단히 소개해 본다.</p>
+<h2 id="다음-코드는-thread-safe-할까"><a href="#다음-코드는-thread-safe-할까" class="headerlink" title="다음 코드는 thread-safe 할까?"></a>다음 코드는 thread-safe 할까?</h2><p>출처 : ‘7가지 동시성 모델’<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">DateParser</span> </span>&#123;</div><div class="line">  <span class="keyword">private</span> <span class="keyword">final</span> DateFormat format = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>);</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">public</span> Date <span class="title">parse</span><span class="params">(String s)</span> <span class="keyword">throws</span> ParseException </span>&#123;</div><div class="line">    <span class="keyword">return</span> format.parse(s);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="숨겨진-가변-상태의-위험성"><a href="#숨겨진-가변-상태의-위험성" class="headerlink" title="숨겨진 가변 상태의 위험성"></a>숨겨진 가변 상태의 위험성</h2><p>언뜻 보기엔 유일한 멤버변수인 format이 final로 선언되어 있어 변경 불가능한 클래스로 보인다.<br>하지만 SimpleDateFormat 내부에서는 가변 상태를 가지고 있기 때문에 결국 DateParser 클래스는 thread-safe 하지 않다.<br>이 때 NumberFormatException 같은 명시적인 오류가 발생하면 차라리 버그를 인지하기 쉽다. 하지만 올바르지 못한 값을 반환하면서 오류가 발생하지 않는 경우 버그를 인지하는데 상당한 시간이 걸릴 수 있다.</p>
+<h2 id="그럼-어떻게-해야하나"><a href="#그럼-어떻게-해야하나" class="headerlink" title="그럼 어떻게 해야하나?"></a>그럼 어떻게 해야하나?</h2><p>사실 SimpleDateFormat 객체를 필요할 때 마다 새로 생성해서 쓰면 쉽게 해결이 가능하다.<br>하지만 유틸성 작업에 매번 객체 생성이라니 뭔가 나이스하지 않다.<br>그렇다. 세상엔 이미 잘 만들어진 바퀴들이 존재한다. thread-safe하면서 빠르기까지한 아래 클래스들을 대신 사용하자.</p>
+<ul>
+<li>Apache Commons 라이브러리 내 FastDateFormat 클래스.</li>
+<li>Joda Time 라이브러리 내 DateTimeFormatter 클래스(java8에서는 기본 내장).</li>
+</ul>
+<h2 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h2><p>불변성에 대한 언어적 지원(제약)이 약한 자바 언어로 웹 프로그래밍을 할 때는 이러한 동시성 이슈를 항시 고민하는 습관이 필요하다. 특히 위 경우처럼 외부 라이브러리를 가져다 멤버 변수로 사용할 때는 thread-safe 한지 반드시 확인후 사용해야 한다.</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;개요&quot;&gt;&lt;a href=&quot;#개요&quot; class=&quot;headerlink&quot; title=&quot;개요&quot;&gt;&lt;/a&gt;개요&lt;/h2&gt;&lt;p&gt;웹은 기본적으로 동시성을 기반으로 하지만 의외로 우리 개발자들은 동시성에 취약한 코드를 작성하곤 한다.&lt;br&gt;책에도 종종 소개
+    
+    </summary>
+    
+    
+      <category term="java" scheme="https://CSS-Org.github.io/tags/java/"/>
+    
+      <category term="concurrency" scheme="https://CSS-Org.github.io/tags/concurrency/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>PKI - Public Key Interface</title>
+    <link href="https://CSS-Org.github.io/2016/11/15/pki/"/>
+    <id>https://CSS-Org.github.io/2016/11/15/pki/</id>
+    <published>2016-11-14T15:00:00.000Z</published>
+    <updated>2016-11-23T03:35:48.497Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="PKI-Public-Key-Interface"><a href="#PKI-Public-Key-Interface" class="headerlink" title="PKI - Public Key Interface"></a>PKI - Public Key Interface</h2><ul>
+<li>암호화는 코드 및 암호를 통해 정보를 보호하는 기술이다.</li>
+<li>코드는 정보 변경 방법을 모르는 상태로 읽을 수 없도록 하기 위해 정보를 체계적으로 변경하는 프로세스이다.</li>
+</ul>
+<p>정보를 코드로 변경하는 작업을 <strong>“암호화”</strong>, 코드를 정보로 되돌리는걸 <strong>“해독”</strong> 이라고 한다.</p>
+<p>암호화를 할때 사용된 수단 혹은 정보를 키라고 하며 이때 사용된 방식을 암호화 알고리즘이라고 한다.</p>
+<p>정리하면</p>
+<ul>
+<li>암호화 : 정보를 코드로 변환</li>
+<li>해독 : 코드를 정보로 변환</li>
+<li>키 : 정보를 코드로 변환할 때 사용된 정보</li>
+<li>암호화 알고리즘 : 정보를 코드로 변경할 때 사용된 방식</li>
+</ul>
+<p>예를 들어…</p>
+<blockquote>
+<p>A는 “Hello World” 라는 정보를 B에게 전송한다.<br>이때 A는 암호화 키로서 l이라는 알파벳을 모두 A로 바꾸는 키를 사용하였고 이걸 심플 알고리즘이라고 이름붙였다.<br>B는 코드로서 “HeAAo WorAd” 라는 코드를 받았다. 애초에 서로 가진 키와 알고리즘을 통해 이 코드는 A를 l로 바꾼 것임을 알고, 암호 해독을 실행하여 “Hello World” 라는 정보를 얻어냈다.</p>
+</blockquote>
+<p>이러한 암호화 방식을 대칭 키 암호화라고 한다.<br>A와 B가 동일한 키를 가지고 있기 때문이다. 심플하지만 이것이 앞으로 나올 암호화의 기본이 된다.</p>
+<p>좀더 발전된 형태의 암호화가 선보였는데, 1976년에 Whitfield Diffe 와 Martin Hellman 에 의해 공개 키 암호화가 발표되었다.<br>이 암호화는 두개의 키를 사용한다.</p>
+<ul>
+<li>하나는 개인키(비밀키)로서 오로지 자신만 소유한다.</li>
+<li>하나는 공개키(공유키)로서 외부에 공개해 둔다.</li>
+<li>두개의 키는 수학 알고리즘으로 묶여 있다.</li>
+</ul>
+<p>이제 다시 예를 들자.</p>
+<ol>
+<li>A는 B에게 메시지를 보내기 위해 B에게 공개키를 요구한다.</li>
+<li>B는 A에게 자신이 가진 개인키와 쌍을 이루고 있는 공개 키를 공개하고,</li>
+<li>A는 그 키를 받아 B에게 보낼 정보를 암호화하여 코드로 만든다.</li>
+<li>B는 코드를 받으면 자신의 개인 키로 해독, A가 보내려 했던 정보를 볼 수 있다</li>
+</ol>
+<p>이 암호화 방식으로 얻어지는 이점은 정보의 교환 말고 여러가지가 있다.</p>
+<p>그중 대표적인 건 <strong>디지털 서명</strong> 이라는 송신자를 확인할 수 있는 이점이다.</p>
+<p>개인키는 오로지 하나의 소유자만이 소유할 수 있기에 만일 개인키로 암호화한 코드는 그 개인이 암호화했다는걸 증명하는 서명과 같이 동작한다.</p>
+<p>디지털 서명의 방법의 플로우는</p>
+<p>정보를 자신의 개인키로 암호화하여 암호화문과 별도로 메시지 헤더등에 추가한다. 이걸 서명이라고 한다.</p>
+<p>그리고 보낼 사람의 공개키로도 정보를 암호화한다.</p>
+<p>받는 측은 메시지 송신자의 진위여부를 파악하기 위해 송신자의 공개키로 헤더의 서명 암호화를 해독한다. 그리고 정보또한 자신의 개인키로 해독한다.</p>
+<p>두 내용이 일치하면 송신자가 조작되지 않았음을 알 수 있다.</p>
+<p>여기서…정보 외에 헤더에 추가하는 서명은 부하등의 이유로 먼저 본문을 약속된 해시 알고리즘으로 해쉬한뒤 서명을 생성하는게 보통이다.</p>
+<p>여기서 주의할 점이 있다.</p>
+<p>일반적인 공개키 암호화 방식은 복잡한 수학 연산에 의해 부하가 상당하다.<br>이 부하를 피하기 위해서 대칭키 암호화와 섞어 사용하는게 보통이다.</p>
+<p>그렇다. 공개키 암호화 방식으로 대칭키 자체를 암호화해 보내는 방법이다.</p>
+<p>키 자체만을 암호화하기 때문에 부하가 상대적으로 비용이 적다.</p>
+<p>여기까지 설명한 방법을 모두 합친 암호화 및 서명 플로우는 다음과 같다.</p>
+<ol>
+<li>정보를 해시한뒤 그 값을 자신의 개인키로 암호화한다.</li>
+<li>그 결과를 보낼 메시지에 추가한다. 이것을 서명이라고 한다.</li>
+<li>일회용의 대칭키를 생성한다.</li>
+<li>대칭키로 정보를 암호화하여 보낼 메시지에 추가한다.</li>
+<li>받는 사람의 공개키를 획득한다.</li>
+<li>받는 사람의 공개키로 일회용의 대칭 키를 암호화한다.</li>
+<li>그 결과를 보낼 메시지에 추가한다.</li>
+<li>수신자는 메시지에서 서명, 암호화된 일회용 대칭키, 암호화된 코드를 확인하고 분리한다.</li>
+<li>수신자의 개인키로 암호화된 일회용 대칭키를 해독한다.</li>
+<li>해독된 대칭 키로 코드를 해독한다.</li>
+<li>보낸 사람의 공개키를 획득한다.</li>
+<li>서명을 보낸 사람의 공개키로 해독하고 그 결과를 위에서 해독된 코드의 정보를 해시하여 비교한다.</li>
+<li>값이 일치하면 메시지와 송신자가 유효한 것이 증명된다.</li>
+</ol>]]></content>
+    
+    <summary type="html">
+    
+      PKI 에 대한 간단한 정리
+    
+    </summary>
+    
+      <category term="Tech" scheme="https://CSS-Org.github.io/categories/tech/"/>
+    
+      <category term="Security" scheme="https://CSS-Org.github.io/categories/tech/security/"/>
+    
+      <category term="Async" scheme="https://CSS-Org.github.io/categories/tech/security/async/"/>
+    
+    
+      <category term="crypto" scheme="https://CSS-Org.github.io/tags/crypto/"/>
+    
+      <category term="security" scheme="https://CSS-Org.github.io/tags/security/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>JavaScript Module Injector 만들기</title>
+    <link href="https://CSS-Org.github.io/2016/11/04/javascriptor-module-injector/"/>
+    <id>https://CSS-Org.github.io/2016/11/04/javascriptor-module-injector/</id>
+    <published>2016-11-04T08:00:00.000Z</published>
+    <updated>2016-11-23T03:35:48.482Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote>
+<p>과거 <a href="http://blog.javarouka.me/2014/09/javascript-module-injector.html" rel="external nofollow noopener noreferrer" target="_blank">개인 블로그 글</a>을 가져온 포스트입니다</p>
+</blockquote>
+<h2 id="JavaScript에서-DI를…"><a href="#JavaScript에서-DI를…" class="headerlink" title="JavaScript에서 DI를…"></a>JavaScript에서 DI를…</h2><p>최근 <a href="https://www.angularjs.org/" rel="external nofollow noopener noreferrer" target="_blank">AngularJS</a> 에 관심이 많아서 여러모로 살펴보는 중인데, 그 중에서도 재미있게 본 것은 <a href="http://ko.wikipedia.org/wiki/%EC%9D%98%EC%A1%B4%EC%84%B1_%EC%A3%BC%EC%9E%85" rel="external nofollow noopener noreferrer" target="_blank">Dependecy Injection</a> 을 JavaScript 레벨에서 지원해준다는 것이었다.</p>
+<p>Java 등에서 쓰이는 Spring Framework에서는 ApplicationContext 에 빈을 등록해두면 특정 애노테이션을 확인하여 DI 해주는 방식으로 진행되지만 JavaScript에서는 Annotation 같은 것이 없고 (비슷하게 구현해볼 수는 있지만 낭비…) 다른 방법으로 구현해야 한다.</p>
+<p>비결은 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/toString" rel="external nofollow noopener noreferrer" target="_blank">Function.prototype.toString</a> 에 있었다.</p>
+<h2 id="Function-toString"><a href="#Function-toString" class="headerlink" title="Function.toString"></a>Function.toString</h2><p>JavaScript의 함수는 toString을 할 경우 함수의 소스코드를 문자열로 반환한다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">imFunction</span>(<span class="params">you, say, ho</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(you, say, ho);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="built_in">document</span>.getElementById(<span class="string">'result'</span>).innerHTML = imFunction.toString();</div></pre></td></tr></table></figure>
+<p><a href="http://jsfiddle.net/javarouka/5wk4sofh/" rel="external nofollow noopener noreferrer" target="_blank">jsFiddle</a></p>
+<p>여기서 중요한 것은 함수의 인자 목록도 문자열에 포함되어 있다는 것이다.</p>
+<p>이걸 활용하면, DI를 흉내내볼 수 있다.</p>
+<h2 id="구현시작…"><a href="#구현시작…" class="headerlink" title="구현시작…"></a>구현시작…</h2><p>먼저 정규식이 필요하다</p>
+<p>함수의 toString 결과를 함수의 이름, 인자, 몸체.이 셋으로 나눠볼 정규식을 만들어보자.</p>
+<p>(함수 몸체와 이름은 일단 쓸일이 없지만 후 확장을 위해 한번에 구해봤다..)</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> FN_PARSE = <span class="regexp">/^function\s*(\S+)[^\(]*\(\s*([^\)]*)\)\s*\&#123;([\W\w]+)\&#125;$/m</span></div></pre></td></tr></table></figure>
+<p>위 정규식으로 match 할 경우 [toString 결과, 함수 이름, 함수 인자, 함수 몸체] 의 배열을 얻을 수 있다.</p>
+<p>주의할 점이, 자바스크립트는 함수 인자 목록에도 주석을 사용할 수 있기에 자칫 주석으로 인자 이름을 잘못 가져올 수 있다.</p>
+<p>주석을 제거하는 정규표현식도 준비한다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> STRIP_COMMENT = <span class="regexp">/((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg</span></div></pre></td></tr></table></figure>
+<p>그렇다면 적당한 함수를 하나 준비해본다</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span>(<span class="params">man, to, women</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(man + to + women);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>파싱해보자.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> FN_PARSE = <span class="regexp">/^function\s*(\S+)[^\(]*\(\s*([^\)]*)\)\s*\&#123;([\W\w]+)\&#125;$/m</span>,</div><div class="line">    STRIP_COMMENT = <span class="regexp">/((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span>(<span class="params">man, to, women</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(man + to + women);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> parsed = hello.toString().match(FN_PARSE),</div><div class="line">    fnName = parsed[<span class="number">1</span>],</div><div class="line">    fnArgs = parsed[<span class="number">2</span>].replace(STRIP_COMMENT, <span class="string">''</span>).split(<span class="string">','</span>)</div><div class="line">    fnBody = parsed[<span class="number">3</span>];</div></pre></td></tr></table></figure>
+<p>잘 된다!</p>
+<p><a href="http://jsfiddle.net/javarouka/ca1g4jf3/" rel="external nofollow noopener noreferrer" target="_blank">jsFiddle</a></p>
+<h2 id="모듈-레지스트리-및-인젝터-구현"><a href="#모듈-레지스트리-및-인젝터-구현" class="headerlink" title="모듈 레지스트리 및 인젝터 구현"></a>모듈 레지스트리 및 인젝터 구현</h2><p>그럼 남은일은 모듈을 등록할 레지스트리를 구현하는 일이다.</p>
+<p>여기서는 간단히 이름 기반의 DI만 지원하는 것으로 하고, 키-값 객체로 관리하게 해보자.</p>
+<p>일단 AMD 모듈이 아닌 일반적인 모듈로 구현해봤다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">(<span class="function"><span class="keyword">function</span>(<span class="params">ctx</span>) </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">var</span> FN_PARSE = <span class="regexp">/^function\s*(\S+)[^\(]*\(\s*([^\)]*)\)\s*\&#123;([\W\w]+)\&#125;$/m</span>,</div><div class="line">        STRIP_COMMENT = <span class="regexp">/((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg</span>,</div><div class="line">        M = &#123;&#125;;</div><div class="line"></div><div class="line">    ctx.Injector = &#123;</div><div class="line"></div><div class="line">        <span class="comment">// 의존성 모듈을 새로 등록한다.</span></div><div class="line">        register: <span class="function"><span class="keyword">function</span>(<span class="params">name, mo</span>) </span>&#123;</div><div class="line">            M[name] = mo;</div><div class="line">        &#125;,</div><div class="line"></div><div class="line">        <span class="comment">// 함수를 받아 의존성을 주입한 뒤 즉시 실행한다.</span></div><div class="line">        execute: <span class="function"><span class="keyword">function</span>(<span class="params">fn, ctx</span>) </span>&#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">this</span>.di(fn, ctx || <span class="keyword">this</span>)();</div><div class="line">        &#125;,</div><div class="line"></div><div class="line">        <span class="comment">// 함수를 받아 의존성을 주입한다.</span></div><div class="line">        di: <span class="function"><span class="keyword">function</span>(<span class="params">fn, ctx</span>)</span>&#123;</div><div class="line"></div><div class="line">            <span class="comment">// 함수를 정규식으로 분해한다.</span></div><div class="line">            <span class="keyword">var</span> parsed = fn.toString().match(FN_PARSE),</div><div class="line">                fnName = parsed[<span class="number">1</span>],</div><div class="line">                args = parsed[<span class="number">2</span>].replace(STRIP_COMMENT, <span class="string">''</span>).split(<span class="string">','</span>),</div><div class="line">                body = parsed[<span class="number">3</span>],</div><div class="line">                i = <span class="number">0</span>, j,</div><div class="line">                injected = [];</div><div class="line"></div><div class="line">            <span class="comment">// 인자의 이름으로 레지스트리에서 찾아 순서대로 적재</span></div><div class="line">            <span class="keyword">for</span>(j = args.length; i &lt; j; i++) &#123;</div><div class="line">                injected[i] = M[args[i].trim()] || <span class="literal">undefined</span>;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="comment">// 래핑 함수를 반환한다.</span></div><div class="line">            <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">                <span class="keyword">return</span> fn.apply(ctx || <span class="literal">null</span>, injected);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line">&#125;)(<span class="keyword">this</span>);</div></pre></td></tr></table></figure>
+<p>di 함수에서 대해 조금 설명하면, 함수를 먼저 분석기로 쪼개서 배열을 얻은 뒤, 인자 배열을 돌면서 등록된 모듈과 매치하는 배열을 생성한 뒤 wrap 하여 반환하는 방식이다.</p>
+<p>어디 잘 돌아가나 테스트.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> Coffee = &#123;</div><div class="line">    <span class="attr">pour</span>: <span class="function"><span class="keyword">function</span>(<span class="params">some</span>) </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="string">"커피를 "</span> + some + <span class="string">"에 따르고 "</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> Milk = &#123;</div><div class="line">    <span class="attr">pour</span>: <span class="function"><span class="keyword">function</span>(<span class="params">some</span>) </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="string">"우유를 "</span> + some + <span class="string">"에 따르고 "</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">Injector.register(<span class="string">'coffee'</span>, Coffee);</div><div class="line">Injector.register(<span class="string">'milk'</span>, Milk);</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Cup</span>(<span class="params">coffee, milk</span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> me = <span class="string">"머그컵"</span>;</div><div class="line">    <span class="keyword">return</span> coffee.pour(me) + milk.pour(me) + <span class="string">" 섞어 마신다"</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> drink = Injector.di(Cup);</div><div class="line"></div><div class="line"><span class="keyword">var</span> coffeeMilk = drink(),</div><div class="line">    directDrink = Injector.execute(Cup);</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(coffeeMilk); <span class="comment">// 커피를 머그컵에 따르고 우유를 머그컵에 따르고 섞어 마신다</span></div><div class="line"><span class="built_in">console</span>.log(coffeeMilk == directDrink); <span class="comment">// true</span></div></pre></td></tr></table></figure>
+<p>맛있는 커피우유가 만들어진 것 같다.</p>
+<p><a href="http://jsfiddle.net/javarouka/dc28fxfg/" rel="external nofollow noopener noreferrer" target="_blank">jsFiddle</a></p>
+<h2 id="생각해볼-것들"><a href="#생각해볼-것들" class="headerlink" title="생각해볼 것들."></a>생각해볼 것들.</h2><p>현재 구현이 포스팅하며 날림한거라 미비하거나 주의할 점이 몇가지 있다</p>
+<ul>
+<li>uglify 등 minify 할 경우 인자 이름이 보존이 안된다. mangle 옵션 등으로 인자이름을 보전해야 올바른 동작이 가능하다.</li>
+<li>래핑 함수를 반환하는 관계로 스코프가 꼬일 수 있다.</li>
+</ul>]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;과거 &lt;a href=&quot;http://blog.javarouka.me/2014/09/javascript-module-injector.html&quot; rel=&quot;external nofollow noopener noreferrer&quot; ta
+    
+    </summary>
+    
+    
+      <category term="javascript" scheme="https://CSS-Org.github.io/tags/javascript/"/>
+    
+      <category term="di" scheme="https://CSS-Org.github.io/tags/di/"/>
+    
+      <category term="module" scheme="https://CSS-Org.github.io/tags/module/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>비개발자도 따라해보는 Hexo 로 페이지 만들기</title>
+    <link href="https://CSS-Org.github.io/2016/11/01/hexo-everyone-no-developer/"/>
+    <id>https://CSS-Org.github.io/2016/11/01/hexo-everyone-no-developer/</id>
+    <published>2016-11-01T13:10:13.000Z</published>
+    <updated>2016-11-23T03:35:48.463Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="시작해보기"><a href="#시작해보기" class="headerlink" title="시작해보기"></a>시작해보기</h2><h3 id="Hexo-란-무엇인가"><a href="#Hexo-란-무엇인가" class="headerlink" title="Hexo 란 무엇인가"></a>Hexo 란 무엇인가</h3><p>정적 사이트 생성기이다</p>
+<h3 id="정적-사이트-생성기란-무엇인가"><a href="#정적-사이트-생성기란-무엇인가" class="headerlink" title="정적 사이트 생성기란 무엇인가"></a>정적 사이트 생성기란 무엇인가</h3><p>웹페이지에 필요한 HTML 문서, 스타일시트, JavaScript 등을 자동으로 생성해주는 것이다</p>
+<h3 id="HTML-이게-뭔가"><a href="#HTML-이게-뭔가" class="headerlink" title="HTML? 이게 뭔가"></a>HTML? 이게 뭔가</h3><p>우리가 인터넷 익스플로러나 크롬, 혹은 모바일 브라우저로 보는 페이지는 사실 단순한 규칙에 따른 문자열이다.</p>
+<p>예전 컴퓨터가 발달하기 전에는 소설이나 기사를 작성하여 출판사에 넘길 때, 원고지에 직접 손으로 썼었다.</p>
+<p>한글이나 MS 워드가 아니기에 글자 굵기라든가, 띄어쓰기, 줄 바꿈 및 이미지 삽입 등을 간단한 기호로 표시하여 출판작업에 참고하도록 했는데, 이것에는 일정한 규칙이 있었다.</p>
+<p>가령 이런 식이다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&lt;굵게&gt;&lt;크게&gt;소나기-황순원&lt;/크게&gt;&lt;/굵게&gt;</div><div class="line"></div><div class="line">그러다가 소녀가 물 속에서 무엇을 하나 집어낸다. 하얀 조약돌이었다.</div><div class="line">&lt;줄바꿈 /&gt;</div><div class="line">그리고는 벌떡 일어나 팔짝팔짝 징검다리를 뛰어 건너간다.</div><div class="line">&lt;줄바꿈 /&gt;</div><div class="line">&lt;줄바꿈 /&gt;</div><div class="line">다 건너가더니만 홱 이리로 돌아서며,</div><div class="line">&lt;줄바꿈 /&gt;</div><div class="line">&lt;인용&gt;&quot;이 바보.&quot;&lt;/인용&gt;</div><div class="line">&lt;줄바꿈 /&gt;</div><div class="line">조약돌이 날아왔다.</div><div class="line">&lt;줄바꿈 /&gt;</div><div class="line">소년은 저도 모르게 벌떡 일어섰다.</div></pre></td></tr></table></figure>
+<p>이 원고로 쓰였다면</p>
+<p>실제 출판물은</p>
+<div style="background-color: #eee; padding: 10px; border: 1px solid #ddd"><span style="font-weight: bold; fonr-size:200%">소나기-황순원</span><br><br>그러다가 소녀가 물 속에서 무엇을 하나 집어낸다. 하얀 조약돌이었다.<br><br>그리고는 벌떡 일어나 팔짝팔짝 징검다리를 뛰어 건너간다.<br><br><br>다 건너가더니만 홱 이리로 돌아서며,<br><br><blockquote style="padding: 10px 10px; margin: 0">“이 바보.”</blockquote><br>조약돌이 날아왔다.<br><br>소년은 저도 모르게 벌떡 일어섰다.<br></div>
+
+<p>같이 나오는 것이다.</p>
+<p>저런 서식이 정규화되어 여러 살을 붙여 발전해온 것이 HTML 이다</p>
+<h3 id="JavaScript-스타일시트"><a href="#JavaScript-스타일시트" class="headerlink" title="JavaScript? 스타일시트?"></a>JavaScript? 스타일시트?</h3><p>최근의 웹 페이지는 예전처럼 정적인 컨텐츠만 표현하지 않고 사용자의 입력에 반응한다. 그리고 글자의 폰트도 다양하게 표현된다.</p>
+<p>이런 규칙이나 리액션을 구현할 수 있게 해주는 일종의 규칙 언어이다.</p>
+<h3 id="잘-모르겠다-이런거-다-알아야-페이지나-블로그-만들-수-있나"><a href="#잘-모르겠다-이런거-다-알아야-페이지나-블로그-만들-수-있나" class="headerlink" title="잘 모르겠다. 이런거 다 알아야 페이지나 블로그 만들 수 있나?"></a>잘 모르겠다. 이런거 다 알아야 페이지나 블로그 만들 수 있나?</h3><p>아니다. 처음 세팅만 잘 하면 몰라도 된다. 다만 마크다운 문법은 조금 알고 있어야 한다</p>
+<h3 id="마크다운"><a href="#마크다운" class="headerlink" title="마크다운?"></a>마크다운?</h3><p>문서 작성을 위한 간결한 문법이다. 아, 걱정할 것 없다. 매우 쉽다. 정말이다.</p>
+<h3 id="그래-Hexo-가-HTML-JavaScript-스타일시트를-만들어주는건-알겠다-그럼-서버에-올리는건-어떻게-하나"><a href="#그래-Hexo-가-HTML-JavaScript-스타일시트를-만들어주는건-알겠다-그럼-서버에-올리는건-어떻게-하나" class="headerlink" title="그래, Hexo 가 HTML, JavaScript, 스타일시트를 만들어주는건 알겠다. 그럼 서버에 올리는건 어떻게 하나"></a>그래, Hexo 가 HTML, JavaScript, 스타일시트를 만들어주는건 알겠다. 그럼 서버에 올리는건 어떻게 하나</h3><p>Hexo가 아주 쉽게 해 준다. 간단한 명령어 하나로 끝난다. 정말이다.</p>
+<p>명령어 하나 치고 커피한잔 하면 내 휴대폰에서 내가 올린 글을 볼 수 있다.</p>
+<p>이제 바로 시작해 보자</p>
+<h2 id="Github-가입하기"><a href="#Github-가입하기" class="headerlink" title="Github 가입하기"></a>Github 가입하기</h2><p><img src="/img/github/octocat.png" alt="깃헙"></p>
+<p>Hexo 로 정적 사이트를 생성해도 이것을 서비스해줄 서버가 없다면 무용지물이다. Github 에서는 Github Page 라는 정적 리소스 제공 서버를 제공한다.</p>
+<p>여기에 생성된 파일을 올리면 페이지를 서비스할 수 있다. 일단은 회원 가입부터 하자.</p>
+<p><a href="https://github.com/join?source=header-home" rel="external nofollow noopener noreferrer" target="_blank">회원가입 링크</a></p>
+<p><img src="/img/github/step1.png" alt="가입1"></p>
+<p>가입 폼 아이디가 도메인 주소가 되므로 신중하게 결정하는게 좋다.</p>
+<p>가령 superman 이 아이디라면 superman.github.io 가 도메인 이름이 된다.</p>
+<p>다음엔 서비스 선택인데, 무료로도 충분하며, 저장소의 카테고리까지 정하고 나면 완료.</p>
+<p>이제 페이지 서비스를 올릴 저장소를 생성해야 한다.</p>
+<p><img src="/img/github/new repo.png" alt="저장소 생성"></p>
+<p><img src="/img/github/new-repo-name.png" alt="저장소 생성"></p>
+<p>중요한건 저장소 이름을 만들 때 가급적 <code>아이디.github.io</code> 의 형식으로 만드는게 귀찮은 일이 줄어든다.</p>
+<p>여기까지 했다면 50%는 완료한 것이다.</p>
+<h2 id="환경-설정하기"><a href="#환경-설정하기" class="headerlink" title="환경 설정하기"></a>환경 설정하기</h2><p>두개를 설치해야 한다.</p>
+<ul>
+<li><a href="https://nodejs.org/ko/" rel="external nofollow noopener noreferrer" target="_blank">nodejs</a></li>
+<li><a href="https://git-scm.com/" rel="external nofollow noopener noreferrer" target="_blank">git</a></li>
+</ul>
+<h3 id="NodeJS-설치"><a href="#NodeJS-설치" class="headerlink" title="NodeJS 설치"></a>NodeJS 설치</h3><h3 id="Git-설치"><a href="#Git-설치" class="headerlink" title="Git 설치"></a>Git 설치</h3><h2 id="본격적으로-시작하기"><a href="#본격적으로-시작하기" class="headerlink" title="본격적으로 시작하기"></a>본격적으로 시작하기</h2><blockquote>
+<p>작성중 …. to be continued..</p>
+</blockquote>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;시작해보기&quot;&gt;&lt;a href=&quot;#시작해보기&quot; class=&quot;headerlink&quot; title=&quot;시작해보기&quot;&gt;&lt;/a&gt;시작해보기&lt;/h2&gt;&lt;h3 id=&quot;Hexo-란-무엇인가&quot;&gt;&lt;a href=&quot;#Hexo-란-무엇인가&quot; class=&quot;headerlink
+    
+    </summary>
+    
+    
+      <category term="no-developer" scheme="https://CSS-Org.github.io/tags/no-developer/"/>
+    
+      <category term="blog" scheme="https://CSS-Org.github.io/tags/blog/"/>
+    
+      <category term="newbee" scheme="https://CSS-Org.github.io/tags/newbee/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>ReactJS를 작성할 때에 알아두면 좋은 ES6 문법들</title>
+    <link href="https://CSS-Org.github.io/2016/10/28/es6-for-reactjs/"/>
+    <id>https://CSS-Org.github.io/2016/10/28/es6-for-reactjs/</id>
+    <published>2016-10-28T14:33:25.000Z</published>
+    <updated>2016-11-23T03:35:48.450Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="ReactJS를-작성할-때에-알아두면-좋은-ES6-문법들"><a href="#ReactJS를-작성할-때에-알아두면-좋은-ES6-문법들" class="headerlink" title="ReactJS를 작성할 때에 알아두면 좋은 ES6 문법들"></a>ReactJS를 작성할 때에 알아두면 좋은 ES6 문법들</h1><h2 id="block-scope"><a href="#block-scope" class="headerlink" title="block scope"></a>block scope</h2><p>기존의 함수에 의한 스코프처럼 <code>{ }</code>으로 감싼 내부에 별도의 스코프가 생성된다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="keyword">let</span> a = <span class="number">10</span>;</div><div class="line">  &#123;</div><div class="line">    <span class="keyword">let</span> a = <span class="number">20</span>;</div><div class="line">    <span class="built_in">console</span>.log(a);    <span class="comment">// (1)</span></div><div class="line">  &#125;</div><div class="line">  <span class="built_in">console</span>.log(a);      <span class="comment">// (2)</span></div><div class="line">&#125;</div><div class="line"><span class="built_in">console</span>.log(a);        <span class="comment">// (3)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> sum = <span class="number">0</span>;</div><div class="line"><span class="keyword">for</span>(<span class="keyword">let</span> j = <span class="number">1</span> ; j &lt;= <span class="number">10</span> ; j++)&#123;</div><div class="line">  sum += j;</div><div class="line">&#125;</div><div class="line"><span class="built_in">console</span>.log(sum);     <span class="comment">// (1)</span></div><div class="line"><span class="built_in">console</span>.log(j);       <span class="comment">// (2)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>(<span class="built_in">Math</span>.random() &lt; <span class="number">0.5</span>) &#123;</div><div class="line">  <span class="keyword">let</span> j = <span class="number">0</span>;</div><div class="line">  <span class="built_in">console</span>.log(j);     <span class="comment">// (1)</span></div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">  <span class="keyword">let</span> j = <span class="number">1</span>;</div><div class="line">  <span class="built_in">console</span>.log(j);     <span class="comment">// (2)</span></div><div class="line">&#125;</div><div class="line"><span class="built_in">console</span>.log(j);       <span class="comment">// (3)</span></div></pre></td></tr></table></figure>
+<h2 id="block-scoped-variables"><a href="#block-scoped-variables" class="headerlink" title="block scoped variables"></a>block scoped variables</h2><p><code>let</code>은 기존의 <code>var</code>를 대체하는 블락변수이고, <code>const</code>는 그 중 한 번 선언 및 정의되고 나면 값을 변경할 수 없는 변수이다.<br>블락 스코프 내부에서 선언된 <code>let</code>, <code>const</code>는 해당 스코프 내에서만 존재하며, 이들에 대해서는 ‘TDZ’가 존재한다.</p>
+<blockquote>
+<p><code>TDZ (temporal dead zone, 임시사각지대)</code> : 블락 스코프 내에서는 지역변수/상수에 대한 호이스팅이 이뤄지기는 하나, 선언된 위치 이전까지는 해당 변수/상수를 인식하지 못한다.</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">console</span>.log(a);    <span class="comment">// (1)</span></div><div class="line"><span class="keyword">let</span> a = <span class="number">2</span>;</div><div class="line"><span class="built_in">console</span>.log(a);    <span class="comment">// (2)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> a = <span class="number">10</span>;</div><div class="line"><span class="keyword">let</span> b = <span class="number">20</span>;</div><div class="line"><span class="built_in">console</span>.log(a, b);               <span class="comment">// (1)</span></div><div class="line"><span class="built_in">console</span>.log(<span class="built_in">window</span>.a, <span class="built_in">window</span>.b); <span class="comment">// (2)</span></div><div class="line"><span class="built_in">console</span>.log(<span class="keyword">this</span>.a, <span class="keyword">this</span>.b);     <span class="comment">// (3)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span>(<span class="keyword">let</span> j = <span class="number">0</span>; j &lt; <span class="number">5</span>; j++)&#123;</div><div class="line">  <span class="built_in">console</span>.log(j);</div><div class="line">&#125;</div><div class="line"><span class="built_in">console</span>.log(j);  <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> PI = <span class="number">3.141593</span>;</div><div class="line">PI = <span class="number">3.14</span>;         <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> OBJ = &#123;</div><div class="line">  <span class="attr">prop1</span> : <span class="number">1</span>,</div><div class="line">  <span class="attr">prop2</span> : [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>],</div><div class="line">  <span class="attr">prop3</span> : &#123;<span class="attr">a</span>: <span class="number">1</span>, <span class="attr">b</span>: <span class="number">2</span>&#125;</div><div class="line">&#125;;</div><div class="line"><span class="built_in">Object</span>.freeze(OBJ);</div><div class="line">OBJ.prop1 = <span class="number">3</span>;</div><div class="line">OBJ.prop2.push(<span class="number">5</span>);</div><div class="line">OBJ.prop3.b = <span class="number">3</span>;</div><div class="line"><span class="built_in">console</span>.log(OBJ);    <span class="comment">// (1)</span></div><div class="line"></div><div class="line"><span class="built_in">Object</span>.freeze(OBJ.prop2);</div><div class="line">OBJ.prop2.push(<span class="number">6</span>);</div><div class="line"><span class="built_in">console</span>.log(OBJ);    <span class="comment">// (2)</span></div></pre></td></tr></table></figure>
+<p><a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze" rel="external nofollow noopener noreferrer" target="_blank">링크 : Object.freeze 및 deep freezing</a></p>
+<h4 id="변수별-스코프-종속성"><a href="#변수별-스코프-종속성" class="headerlink" title="변수별 스코프 종속성"></a>변수별 스코프 종속성</h4><table>
+<thead>
+<tr>
+<th style="text-align:center">variables \ scope</th>
+<th style="text-align:center">function</th>
+<th style="text-align:center">block</th>
+<th style="text-align:center">hoisting</th>
+<th style="text-align:center">TDZ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">let</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">O</td>
+</tr>
+<tr>
+<td style="text-align:center">const</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">O</td>
+</tr>
+<tr>
+<td style="text-align:center">var</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">X</td>
+</tr>
+<tr>
+<td style="text-align:center">function declaration</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">△</td>
+<td style="text-align:center">O</td>
+<td style="text-align:center">X</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>함수선언문의 경우 sloppy-mode 모드에서는 block-scope의 영향을 받지 않고, strict-mode에서는 block-scope의 영향을 받는다.</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  foo();</div><div class="line">  <span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>)</span>&#123; <span class="built_in">console</span>.log(<span class="number">1</span>); &#125;</div><div class="line">  &#123;</div><div class="line">    foo();</div><div class="line">    <span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>)</span>&#123; <span class="built_in">console</span>.log(<span class="number">2</span>);&#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">foo();</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">'use strict'</span>;</div><div class="line">&#123;</div><div class="line">  foo();</div><div class="line">  <span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>)</span>&#123; <span class="built_in">console</span>.log(<span class="number">1</span>); &#125;</div><div class="line">  &#123;</div><div class="line">    foo();</div><div class="line">    <span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>)</span>&#123; <span class="built_in">console</span>.log(<span class="number">2</span>);&#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">foo();</div></pre></td></tr></table></figure>
+<h2 id="arrow-function"><a href="#arrow-function" class="headerlink" title="arrow function"></a>arrow function</h2><p>순수 함수로서의 기능만을 담당하기 위해 간소화한 함수.<br><code>=&gt;</code>의 좌측엔 매개변수, 우측엔 return될 내용을 기입한다. 우측이 여러줄로 이루어져있다면 <code>{ }</code>로 묶을 수 있으며, 이 경우엔 명시적으로 return을 기술하지 않으면 <code>undefined</code>가 반환된다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> getDate = <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">new</span> <span class="built_in">Date</span>();</div><div class="line"><span class="keyword">let</span> sum = <span class="function">(<span class="params">a, b</span>) =&gt;</span> a + b;</div><div class="line"><span class="keyword">let</span> getSquare = <span class="function"><span class="params">a</span> =&gt;</span> &#123; <span class="keyword">return</span> a * a; &#125;</div><div class="line"><span class="keyword">let</span> calc = <span class="function">(<span class="params">method, a, b</span>) =&gt;</span> &#123;</div><div class="line">  <span class="keyword">switch</span>(method) &#123;</div><div class="line">    <span class="keyword">case</span> <span class="string">'sum'</span>: <span class="keyword">return</span> a + b;</div><div class="line">    <span class="keyword">case</span> <span class="string">'sub'</span>: <span class="keyword">return</span> a - b;</div><div class="line">    <span class="keyword">case</span> <span class="string">'mul'</span>: <span class="keyword">return</span> a * b;</div><div class="line">    <span class="keyword">case</span> <span class="string">'div'</span>: <span class="keyword">return</span> a / b;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> <span class="literal">null</span>;</div><div class="line">&#125;</div><div class="line"><span class="built_in">console</span>.log(getDate());</div><div class="line"><span class="built_in">console</span>.log(sum(<span class="number">4</span>, <span class="number">5</span>));</div><div class="line"><span class="built_in">console</span>.log(getSquare(<span class="number">10</span>));</div><div class="line"><span class="built_in">console</span>.log(calc(<span class="string">'mul'</span>, <span class="number">3</span>, <span class="number">4</span>));</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> obj = &#123;</div><div class="line">  <span class="attr">grades</span>: [<span class="number">80</span>, <span class="number">90</span>, <span class="number">100</span>],</div><div class="line">  <span class="attr">getTotal</span>: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">this</span>.total = <span class="number">0</span>;</div><div class="line">    <span class="keyword">this</span>.grades.forEach(<span class="function"><span class="params">v</span> =&gt;</span> &#123;</div><div class="line">      <span class="keyword">this</span>.total += v;</div><div class="line">    &#125;);</div><div class="line">  &#125;</div><div class="line">&#125;;</div><div class="line">obj.getTotal();</div><div class="line"><span class="built_in">console</span>.log(obj.total);  <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<h2 id="rest-parameter"><a href="#rest-parameter" class="headerlink" title="rest parameter"></a>rest parameter</h2><ul>
+<li>함수 파라미터에 일정하지 않은 값들을 넘기고자 할 경우에 유용.</li>
+<li>arguments의 대체.</li>
+<li>배열의 얕은복사 목적으로 활용 가능.</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params">x, y, ...rest</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(rest);        <span class="comment">// (1)</span></div><div class="line">&#125;</div><div class="line">f(<span class="number">1</span>, <span class="number">2</span>, <span class="literal">true</span>, <span class="literal">null</span>, <span class="literal">undefined</span>, <span class="number">10</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> sum = <span class="function"><span class="keyword">function</span>(<span class="params">...arg</span>) </span>&#123;</div><div class="line">  <span class="keyword">let</span> result = <span class="number">0</span>;</div><div class="line">  <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; arg.length ; i++)&#123;</div><div class="line">    result += arg[i];</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> result;</div><div class="line">&#125;;</div><div class="line"><span class="comment">/* const sum = (...arg) =&gt; arg.reduce((p,c)=&gt; p+c); */</span></div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(sum(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>));  <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<h2 id="spread-operator"><a href="#spread-operator" class="headerlink" title="spread operator"></a>spread operator</h2><p>문자열의 각 단어, 배열의 요소들이나 객체의 프로퍼티들(stage-2 proposal)을 해체하여 여러개의 값으로 반환해준다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> str = <span class="string">'lorem ipsum'</span>;</div><div class="line"><span class="keyword">const</span> arr = [<span class="number">20</span>, <span class="number">10</span>, <span class="number">30</span>, <span class="number">40</span>, <span class="number">50</span>];</div><div class="line"><span class="built_in">console</span>.log(...arr);       <span class="comment">// (1)</span></div><div class="line"><span class="built_in">console</span>.log([...str]);     <span class="comment">// (2)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> originalArray = [<span class="number">1</span>, <span class="number">2</span>];</div><div class="line"><span class="keyword">const</span> copiedArray = [...originalArray];</div><div class="line"></div><div class="line">originalArray.push(<span class="number">3</span>);</div><div class="line"><span class="built_in">console</span>.log(originalArray);   <span class="comment">// (1)</span></div><div class="line"><span class="built_in">console</span>.log(copiedArray);     <span class="comment">// (2)</span></div></pre></td></tr></table></figure>
+<h2 id="default-parameter"><a href="#default-parameter" class="headerlink" title="default parameter"></a>default parameter</h2><p>파라미터에 값을 할당하지 않거나 빈 값인 상태로 함수를 호출할 경우, 해당 파라미터를 지정한 기본값으로 인식하도록 해줌.<br>각 파라미터는 내부에서 let과 동일하게 동작하며, 따라서 TDZ가 존재한다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params">x = <span class="number">1</span>, y = <span class="number">2</span>, z = <span class="number">3</span></span>)</span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(x, y, z);     <span class="comment">//(1)</span></div><div class="line">&#125;</div><div class="line">f(<span class="number">4</span>, <span class="literal">undefined</span>, <span class="number">5</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">multiply</span>(<span class="params">x = y * <span class="number">3</span>, y</span>)</span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(x * y);</div><div class="line">&#125;</div><div class="line">multiply(<span class="number">2</span>, <span class="number">3</span>);             <span class="comment">// (1)</span></div><div class="line">multiply(<span class="literal">undefined</span>, <span class="number">2</span>);     <span class="comment">// (2)</span></div></pre></td></tr></table></figure>
+<h2 id="Enhanced-Object-Literal"><a href="#Enhanced-Object-Literal" class="headerlink" title="Enhanced Object Literal"></a>Enhanced Object Literal</h2><h3 id="computed-property-key"><a href="#computed-property-key" class="headerlink" title="computed property key"></a>computed property key</h3><p>프로퍼티의 키값에 표현식을 지정할 수 있다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> suffix = <span class="string">' name'</span>;</div><div class="line"><span class="keyword">const</span> iu = &#123;</div><div class="line">  [<span class="string">'last'</span> + suffix] : <span class="string">'이'</span>,</div><div class="line">  [<span class="string">'first'</span> + suffix] : <span class="string">'지은'</span></div><div class="line">&#125;;</div><div class="line"><span class="built_in">console</span>.log(iu);    <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> foo = <span class="function">(<span class="params">(</span>) =&gt;</span> &#123;</div><div class="line">  <span class="keyword">let</span> count = <span class="number">0</span>;</div><div class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">    <span class="keyword">return</span> count++;</div><div class="line">  &#125;;</div><div class="line">&#125;)();</div><div class="line"></div><div class="line"><span class="keyword">const</span> obj = &#123;</div><div class="line">  [<span class="string">'bar'</span> + foo()] : foo(),</div><div class="line">  [<span class="string">'bar'</span> + foo()] : foo()</div><div class="line">&#125;;</div><div class="line"><span class="built_in">console</span>.log(obj);    <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<h3 id="property-Shorthand"><a href="#property-Shorthand" class="headerlink" title="property Shorthand"></a>property Shorthand</h3><p>프로퍼티의 키와 값에 할당한 변수명이 동일한 경우, 키를 생략할 수 있다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> x = <span class="number">10</span>, y = <span class="number">20</span>;</div><div class="line"><span class="keyword">const</span> obj = &#123;</div><div class="line">  x,</div><div class="line">  y</div><div class="line">&#125;;</div><div class="line"><span class="built_in">console</span>.log(obj);    <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">setInformation</span>(<span class="params">name, age, gender</span>)</span>&#123;</div><div class="line">  <span class="keyword">return</span> &#123;</div><div class="line">    name,</div><div class="line">    age,</div><div class="line">    gender</div><div class="line">  &#125;;</div><div class="line">&#125;</div><div class="line"><span class="keyword">const</span> iu = setInformation(<span class="string">'아이유'</span>, <span class="number">23</span>, <span class="string">'female'</span>);</div><div class="line"><span class="built_in">console</span>.log(iu);    <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<h3 id="method-Shorthand"><a href="#method-Shorthand" class="headerlink" title="method Shorthand"></a>method Shorthand</h3><p>메서드명 뒤의 <code>: function</code> 키워드를 생략할 수 있게 되었다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> obj = &#123;</div><div class="line">  <span class="attr">name</span> : <span class="string">'foo'</span>,</div><div class="line">  getName() &#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.name;</div><div class="line">  &#125;,</div><div class="line">  printName(name) &#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.getName());</div><div class="line">  &#125;</div><div class="line">&#125;;</div><div class="line"><span class="built_in">console</span>.log(obj.getName());    <span class="comment">// (1)</span></div><div class="line">obj.printName();               <span class="comment">// (2)</span></div></pre></td></tr></table></figure>
+<h3 id="Object-assign-ES5"><a href="#Object-assign-ES5" class="headerlink" title="Object.assign (ES5)"></a><code>Object.assign</code> (ES5)</h3><p><a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Object/assign" rel="external nofollow noopener noreferrer" target="_blank">Object.assign()</a><br>객체의 얕은복사를 수행한다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> originalObj = &#123;</div><div class="line">  <span class="attr">a</span>: <span class="number">1</span>,</div><div class="line">  <span class="attr">b</span>: [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>],</div><div class="line">  <span class="attr">c</span>: &#123; <span class="attr">d</span>: <span class="number">5</span>, <span class="attr">e</span>: <span class="number">6</span> &#125;</div><div class="line">&#125;;</div><div class="line"><span class="keyword">const</span> copiedObj = <span class="built_in">Object</span>.assign(&#123;&#125;, originalObj);</div><div class="line">copiedObj.a = <span class="number">11</span>;</div><div class="line">copiedObj.b[<span class="number">0</span>] = <span class="number">12</span>;</div><div class="line">copiedObj.c.d = <span class="number">13</span>;</div><div class="line"><span class="built_in">console</span>.log(originalObj, copiedObj);  <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> originalObj = &#123;</div><div class="line">  <span class="attr">a</span>: [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>],</div><div class="line">  <span class="attr">b</span>: &#123; <span class="attr">d</span>: <span class="number">5</span>, <span class="attr">e</span>: <span class="number">6</span> &#125;</div><div class="line">&#125;;</div><div class="line"><span class="keyword">const</span> copiedObj = <span class="built_in">Object</span>.assign(&#123;&#125;, originalObj, &#123; <span class="attr">b</span>: &#123; <span class="attr">f</span>: <span class="number">7</span>, <span class="attr">g</span>: <span class="number">8</span> &#125; &#125;);</div><div class="line"><span class="built_in">console</span>.log(copiedObj);   <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<h2 id="template-literals"><a href="#template-literals" class="headerlink" title="template literals"></a>template literals</h2><p>여러줄 문자열, 보간(표현식 삽입) 등을 지원하는 새로운 형태의 문자열.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">console</span>.log(<span class="string">`a</span></div><div class="line">bb</div><div class="line">ccc`);               <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> a = <span class="number">10</span>;</div><div class="line"><span class="keyword">const</span> b = <span class="number">20</span>;</div><div class="line"><span class="keyword">const</span> str = <span class="string">`<span class="subst">$&#123;a&#125;</span> + <span class="subst">$&#123;b&#125;</span> = <span class="subst">$&#123; a + b &#125;</span>`</span>;</div><div class="line"><span class="built_in">console</span>.log(str);    <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> characters = [&#123;</div><div class="line">  <span class="attr">name</span>: <span class="string">'Aria Stark'</span>,</div><div class="line">  <span class="attr">lines</span>: [<span class="string">'A girl has no name.'</span>]</div><div class="line">&#125;, &#123;</div><div class="line">  <span class="attr">name</span>: <span class="string">'John Snow'</span>,</div><div class="line">  <span class="attr">lines</span>: [</div><div class="line">    <span class="string">'You know nothing, John Snow.'</span>,</div><div class="line">    <span class="string">'Winter is coming.'</span></div><div class="line">  ]</div><div class="line">&#125;];</div><div class="line"><span class="keyword">const</span> html = characters.reduce(<span class="function">(<span class="params">prevCharacters, currentCaracter</span>) =&gt;</span> &#123;</div><div class="line">  <span class="keyword">const</span> &#123; name, lines &#125; = currentCaracter;</div><div class="line">  <span class="keyword">return</span> <span class="string">`<span class="subst">$&#123;prevCharacters&#125;</span>&lt;article&gt;</span></div><div class="line">  &lt;h1&gt;<span class="subst">$&#123;name&#125;</span>&lt;/h1&gt;</div><div class="line">  &lt;ul&gt;<span class="subst">$&#123;lines.reduce((prevLines, currentLine) =&gt;</span></div><div class="line">    <span class="string">`<span class="subst">$&#123;prevLines || <span class="string">''</span>&#125;</span></span></div><div class="line">    &lt;li&gt;<span class="subst">$&#123;currentLine&#125;</span>&lt;/li&gt;`</div><div class="line">  , <span class="string">''</span>)&#125;</div><div class="line">  &lt;/ul&gt;</div><div class="line">&lt;/article&gt;</div><div class="line">`&#125;, <span class="string">''</span>);</div><div class="line"><span class="built_in">console</span>.log(html);    <span class="comment">// (1)</span></div></pre></td></tr></table></figure>
+<h2 id="class"><a href="#class" class="headerlink" title="class"></a>class</h2><p>Java의 그것과 비슷하지만 private 메서드가 없다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</div><div class="line">  <span class="keyword">constructor</span>(name, age) &#123;</div><div class="line">    <span class="keyword">this</span>.name = name;</div><div class="line">    <span class="keyword">this</span>.age = age;</div><div class="line">  &#125;</div><div class="line">  toString() &#123;</div><div class="line">    <span class="keyword">return</span> <span class="string">`<span class="subst">$&#123;<span class="keyword">this</span>.name&#125;</span>, <span class="subst">$&#123;<span class="keyword">this</span>.age&#125;</span>세`</span>;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">static</span> logNames(persons) &#123;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> person <span class="keyword">of</span> persons) &#123;</div><div class="line">      <span class="built_in">console</span>.log(person.name, person.age);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Employee</span> <span class="keyword">extends</span> <span class="title">Person</span> </span>&#123;</div><div class="line">  <span class="keyword">static</span> logNames(persons) &#123;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> person <span class="keyword">of</span> persons) &#123;</div><div class="line">      <span class="built_in">console</span>.log(person.name, person.age, person.title);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">constructor</span>(name, age, title) &#123;</div><div class="line">    <span class="keyword">super</span>(name, age);</div><div class="line">    <span class="keyword">this</span>.title = title;</div><div class="line">  &#125;</div><div class="line">  toString() &#123;</div><div class="line">    <span class="keyword">return</span> <span class="string">`<span class="subst">$&#123;<span class="keyword">super</span>.toString()&#125;</span>, (<span class="subst">$&#123;<span class="keyword">this</span>.title&#125;</span>)`</span>;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">const</span> park = <span class="keyword">new</span> Employee(<span class="string">'Park'</span>, <span class="number">35</span>, <span class="string">'CTO'</span>);</div><div class="line"><span class="keyword">const</span> jung = <span class="keyword">new</span> Employee(<span class="string">'Jung'</span>, <span class="number">30</span>, <span class="string">'CEO'</span>);</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(park.toString());       <span class="comment">// (1)</span></div><div class="line">Person.logNames([park, jung]);      <span class="comment">// (2)</span></div><div class="line">Employee.logNames([park, jung]);    <span class="comment">// (3)</span></div></pre></td></tr></table></figure>
+<h2 id="module-import-export"><a href="#module-import-export" class="headerlink" title="module - import / export"></a>module - import / export</h2><h3 id="without-‘default’-export"><a href="#without-‘default’-export" class="headerlink" title="without ‘default’ export"></a>without ‘default’ export</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//------ lib.js ------</span></div><div class="line"><span class="keyword">export</span> <span class="keyword">const</span> sqrt = <span class="built_in">Math</span>.sqrt;</div><div class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">square</span>(<span class="params">x</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> x * x;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//------ main.js ------</span></div><div class="line"><span class="keyword">import</span> * <span class="keyword">as</span> lib <span class="keyword">from</span> <span class="string">'./lib'</span>;</div><div class="line"><span class="built_in">console</span>.log(lib);             <span class="comment">// (1)</span></div><div class="line"><span class="built_in">console</span>.log(lib.square(<span class="number">5</span>));   <span class="comment">// (2)</span></div><div class="line"><span class="built_in">console</span>.log(lib.sqrt(<span class="number">4</span>));     <span class="comment">// (3)</span></div><div class="line"></div><div class="line"><span class="comment">/* or */</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> &#123; square, sqrt &#125; <span class="keyword">from</span> <span class="string">'./lib'</span>;</div><div class="line"><span class="built_in">console</span>.log(square(<span class="number">5</span>));       <span class="comment">// (4)</span></div><div class="line"><span class="built_in">console</span>.log(sqrt(<span class="number">4</span>));         <span class="comment">// (5)</span></div></pre></td></tr></table></figure>
+<h3 id="with-‘default’-export"><a href="#with-‘default’-export" class="headerlink" title="with ‘default’ export"></a>with ‘default’ export</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//------ lib.js ------</span></div><div class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">lib</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'this is lib default function'</span>);</div><div class="line">&#125;</div><div class="line"><span class="keyword">export</span> <span class="keyword">const</span> sqrt = <span class="built_in">Math</span>.sqrt;</div><div class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">square</span>(<span class="params">x</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> x * x;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//------ main.js ------</span></div><div class="line"><span class="keyword">import</span> * <span class="keyword">as</span> lib <span class="keyword">from</span> <span class="string">'./lib'</span>;</div><div class="line"><span class="built_in">console</span>.log(lib.default());   <span class="comment">// (1)</span></div><div class="line"><span class="built_in">console</span>.log(lib.square(<span class="number">5</span>));   <span class="comment">// (2)</span></div><div class="line"><span class="built_in">console</span>.log(lib.sqrt(<span class="number">4</span>));     <span class="comment">// (3)</span></div><div class="line"></div><div class="line"><span class="comment">/* or */</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> lib, &#123; square, sqrt &#125; <span class="keyword">from</span> <span class="string">'lib'</span>;</div><div class="line"><span class="built_in">console</span>.log(lib);             <span class="comment">// (4)</span></div><div class="line"><span class="built_in">console</span>.log(square(<span class="number">5</span>));       <span class="comment">// (5)</span></div><div class="line"><span class="built_in">console</span>.log(sqrt(<span class="number">4</span>));         <span class="comment">// (6)</span></div></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;ReactJS를-작성할-때에-알아두면-좋은-ES6-문법들&quot;&gt;&lt;a href=&quot;#ReactJS를-작성할-때에-알아두면-좋은-ES6-문법들&quot; class=&quot;headerlink&quot; title=&quot;ReactJS를 작성할 때에 알아두면 좋은 ES6 문법
+    
+    </summary>
+    
+    
+      <category term="javascript, es6" scheme="https://CSS-Org.github.io/tags/javascript-es6/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>JS 숫자 변환 이모저모</title>
+    <link href="https://CSS-Org.github.io/2016/10/28/js-convert-number/"/>
+    <id>https://CSS-Org.github.io/2016/10/28/js-convert-number/</id>
+    <published>2016-10-28T02:25:41.000Z</published>
+    <updated>2016-11-23T03:35:48.490Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="js-의-숫자-변환"><a href="#js-의-숫자-변환" class="headerlink" title="js 의 숫자 변환"></a>js 의 숫자 변환</h2><p>자바스크립트 숫자 변환은 <a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/parseInt" rel="external nofollow noopener noreferrer" target="_blank">parseInt</a>, <a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/parseFloat" rel="external nofollow noopener noreferrer" target="_blank">parseFloat</a>, <a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Number" rel="external nofollow noopener noreferrer" target="_blank">Number</a> 등이 있다.</p>
+<p><code>parseInt</code> 와 <code>parseFloat</code> 는 이름 그대로의 기능을 한다</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> num = <span class="string">"32.4"</span></div><div class="line"><span class="built_in">parseInt</span>(num); <span class="comment">// 32</span></div><div class="line"><span class="built_in">parseFloat</span>(num); <span class="comment">// 32.4</span></div></pre></td></tr></table></figure>
+<p><code>Number</code> 도 일견 <code>parseFloat</code> 와 비슷하다. 히지만 세부 동작은 조금씩 다르다. 자세한건 아래에서 계속 이야기해보자.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> num = <span class="string">"32.4"</span></div><div class="line"><span class="built_in">Number</span>(num); <span class="comment">// 32</span></div><div class="line"><span class="built_in">Number</span>(num); <span class="comment">// 32.4</span></div></pre></td></tr></table></figure>
+<h3 id="parseInt"><a href="#parseInt" class="headerlink" title="parseInt"></a>parseInt</h3><p><code>parseInt</code> 는 첫번째 인자가 숫자가 아니면 <a href="http://www.ecma-international.org/ecma-262/6.0/#sec-tostring" rel="external nofollow noopener noreferrer" target="_blank">ECMAScript 표준의 ToString 연산</a> 을 수행한다. (영문 및 장문 주의)<br>그 다음에 ToString 결과로 반환된 값으로 숫자 변환을 시작한다.</p>
+<p>여기서 <code>parseInt</code> 와 <code>parseFloat</code> 가 약간 다른데, <code>parseInt</code> 는 추가적인 두번째 인자로 <code>radix</code> 를 지정해줄 수 있다.</p>
+<p>다음 예제를 보자</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> num = <span class="string">"1010"</span>;</div><div class="line"><span class="built_in">parseInt</span>(num, <span class="number">2</span>); <span class="comment">// 10</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> num = <span class="string">"FF"</span>;</div><div class="line"><span class="built_in">parseInt</span>(num, <span class="number">16</span>); <span class="comment">// 255</span></div></pre></td></tr></table></figure>
+<p>명세에서는 radix 를 주지 않을 경우 10진수 해석을 명시하고 있지만, 구형 브라우저나 (가령 IE7 이하) 구현에 따라 바뀔 수 있으므로, parseInt 사용시에는 두번째 인자에 반드시 radix 를 주는게 좋다.</p>
+<ul>
+<li><a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/parseInt#radix가_없는_8진_해석" rel="external nofollow noopener noreferrer" target="_blank">radix가 없는 8진 해석</a></li>
+</ul>
+<p>또한 인자 첫번째의 공백이나 첫번째가 아닌 자릿수에 문자열이 섞일 경우 무시하며 <code>0x</code> 나 <code>0X</code> 로 시작하는 문자열은 radix 를 16으로 가정한다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">parseInt</span>(<span class="string">"1A"</span>, <span class="number">10</span>); <span class="comment">// 1</span></div><div class="line"><span class="built_in">parseInt</span>(<span class="string">"  3 2"</span>, <span class="number">10</span>); <span class="comment">// 3</span></div><div class="line"><span class="built_in">parseInt</span>(<span class="string">"0xFF"</span>); <span class="comment">// 255</span></div></pre></td></tr></table></figure>
+<h3 id="parseFloat"><a href="#parseFloat" class="headerlink" title="parseFloat"></a>parseFloat</h3><p>문자열 인수를 인자로 받아 부동 소수점 수를 반환한다. 인자가 문자열이 아니면 <a href="http://www.ecma-international.org/ecma-262/6.0/#sec-tostring" rel="external nofollow noopener noreferrer" target="_blank">ToString</a>) 연산을 수행한다.</p>
+<p><code>parseFloat</code> 는 주어진 인자를 <code>parseInt</code> 와는 다르게 변환 대상이 될 인자 하나만 받는다. 이 함수 역시 parseInt 와 같게 ToString 을 수행 후 변환을 시도한다. 변환 실패 시 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN" rel="external nofollow noopener noreferrer" target="_blank">NaN</a> 을 반환하는 것도 같다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">parseFloat</span>(<span class="string">"1.23"</span>) <span class="comment">// 1.23;</span></div></pre></td></tr></table></figure>
+<p><a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Infinity" rel="external nofollow noopener noreferrer" target="_blank">Infinity</a> 를 해석할 수 없어 <a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/NaN" rel="external nofollow noopener noreferrer" target="_blank">NaN</a> 을 반환하는 <code>parseInt</code> 와 다르게 <code>parseFloat</code> 는 <code>NaN</code> 을 반환하지 않는다</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">parseInt</span>(<span class="literal">Infinity</span>) <span class="comment">// NaN</span></div><div class="line"><span class="built_in">parseFloat</span>(<span class="literal">Infinity</span>) <span class="comment">// Infinity</span></div></pre></td></tr></table></figure>
+<h3 id="Number"><a href="#Number" class="headerlink" title="Number"></a>Number</h3><p><code>Number</code> 는 통상 <code>parseFloat</code> 와 비슷하다고 생각할 수 있다.</p>
+<p>하지만 세부적으로 약간 다른데, <a href="http://www.ecma-international.org/ecma-262/6.0/#sec-tonumber" rel="external nofollow noopener noreferrer" target="_blank">ToNumber</a> 라는 작업으로 진행된다. (영어 및 표준문서 압박 주의)</p>
+<p>정수형 변환일 불가능한 문자열이 있을 경우 <code>NaN</code> 이 반환된다</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">parseFloat</span>(<span class="string">"1a"</span>) <span class="comment">// 1</span></div><div class="line"><span class="built_in">Number</span>(<span class="string">"1a"</span>) <span class="comment">// NaN</span></div></pre></td></tr></table></figure>
+<p>16진수 형식의 문자열일 경우 <code>parseFloat</code> 와는 다르게 해석이 가능하다</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">parseFloat</span>(<span class="string">"0x10"</span>) <span class="comment">// 0</span></div><div class="line"><span class="built_in">Number</span>(<span class="string">"0x10"</span>) <span class="comment">// 16</span></div></pre></td></tr></table></figure>
+<p>어떤 코드를 보다보면 값에 + 연산자를 붙여 처리하는 표현식을 본 일이 있을것이다. (없다고??)</p>
+<p>이 표현은 <code>Number(val)</code> 과 거의 동일하다고 보면 정확하다</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">+<span class="string">"2"</span> === <span class="built_in">Number</span>(<span class="string">"2"</span>) <span class="comment">// true</span></div><div class="line">+[] === <span class="built_in">Number</span>([]) <span class="comment">// true</span></div><div class="line">+<span class="keyword">new</span> <span class="built_in">Date</span> === <span class="built_in">Number</span>(<span class="keyword">new</span> <span class="built_in">Date</span>()) <span class="comment">// true</span></div></pre></td></tr></table></figure>
+<h3 id="bitwise"><a href="#bitwise" class="headerlink" title="bitwise"></a>bitwise</h3><p>비트연산이 왜 나오는지 뜬금없어 할 수도 있다.</p>
+<p>하지만 비트 연산으로도 숫자 변환이 가능하다. 그리고 명세상 성능이 타 변환보다 빠를 수 있다. (물론 구현에 따라 다를 수 있다.)</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 777.77 을 정수형으로 변환 시도</span></div><div class="line"><span class="comment">// 결과는 전부 10진 정수 [777]</span></div><div class="line"></div><div class="line"><span class="built_in">parseInt</span>(<span class="number">777.77</span>, <span class="number">10</span>)</div><div class="line"><span class="built_in">Math</span>.floor(<span class="number">777.77</span>)</div><div class="line">~~<span class="number">777.77</span></div><div class="line"><span class="number">777.77</span> | <span class="number">0</span></div><div class="line"><span class="number">777.77</span> &gt;&gt; <span class="number">0</span></div><div class="line"><span class="number">777.77</span> &gt;&gt;&gt; <span class="number">0</span></div><div class="line"><span class="number">777.77</span> &lt;&lt; <span class="number">0</span></div></pre></td></tr></table></figure>
+<p>비트연산 시 명세에서는 피연산자를 <a href="http://www.ecma-international.org/ecma-262/6.0/#sec-touint32" rel="external nofollow noopener noreferrer" target="_blank">ToUint32</a> 작업을 선행하여 강제 변환하게 되어 있기에 이런게 가능하다.</p>
+<p>이런 문법은 일종의 언어 스펙을 이용한 트릭이라고 할 수 있다. 이것에 대해서 잘 알지 못하면 알수없는 암호문이 되어 버리니 팀원과의 소통은 필수다.</p>
+<p>비트연산을 썼을때의 장점은</p>
+<ul>
+<li>일반적으로 타 방법 (<code>parseXXX</code>, <code>Number</code>) 보다 빠르다</li>
+<li>뭔가 뛰어난 프로그래머가 된 느낌을 받을 수 있다.</li>
+</ul>
+<p>주의할 점은 Uint32 형이기에 원래의 값에 변형이 올 수 있으니 주의해야 한다. (음수라거나 int 형을 초과하는 경우)</p>
+<h5 id="참고-각-연산법에-대한-성능비교"><a href="#참고-각-연산법에-대한-성능비교" class="headerlink" title="참고: 각 연산법에 대한 성능비교"></a>참고: 각 연산법에 대한 성능비교</h5><p><a href="https://jsperf.com/number-vs-parseint-vs-plus/3" rel="external nofollow noopener noreferrer" target="_blank">Number() vs parseInt() vs plus vs bitwise</a></p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;js-의-숫자-변환&quot;&gt;&lt;a href=&quot;#js-의-숫자-변환&quot; class=&quot;headerlink&quot; title=&quot;js 의 숫자 변환&quot;&gt;&lt;/a&gt;js 의 숫자 변환&lt;/h2&gt;&lt;p&gt;자바스크립트 숫자 변환은 &lt;a href=&quot;https://develop
+    
+    </summary>
+    
+    
+      <category term="javascript" scheme="https://CSS-Org.github.io/tags/javascript/"/>
+    
+      <category term="parseInt" scheme="https://CSS-Org.github.io/tags/parseint/"/>
+    
+      <category term="bitwise" scheme="https://CSS-Org.github.io/tags/bitwise/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>블로그 글 쓰기</title>
+    <link href="https://CSS-Org.github.io/2016/10/01/getting-started/"/>
+    <id>https://CSS-Org.github.io/2016/10/01/getting-started/</id>
+    <published>2016-10-01T02:25:41.000Z</published>
+    <updated>2016-11-23T03:35:48.457Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ git <span class="built_in">clone</span> https://github.com/CSS-Org/CSS-Org.github.io.git</div><div class="line">$ <span class="built_in">cd</span> CSS-Org.github.io</div><div class="line">$ git checkout -b working origin/working</div><div class="line">$ npm i</div><div class="line">$ npm run server</div></pre></td></tr></table></figure>
+<h2 id="Deploy"><a href="#Deploy" class="headerlink" title="Deploy"></a>Deploy</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm run deploy</div></pre></td></tr></table></figure>
+<h2 id="Documentation"><a href="#Documentation" class="headerlink" title="Documentation"></a>Documentation</h2><p><a href="https://hexo.io/ko/" rel="external nofollow noopener noreferrer" target="_blank">https://hexo.io/ko/</a></p>
+<h2 id="Configuration"><a href="#Configuration" class="headerlink" title="Configuration"></a>Configuration</h2><p>{root}/_config.yml 파일을 열어 다음 프로퍼티를 수정한다.</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># @file &#123;root&#125;/_config.yml</span></div><div class="line"></div><div class="line">theme: [&#123;root&#125;/themes/테마디렉토리 에서 테마디렉토리명]</div></pre></td></tr></table></figure>
+<blockquote>
+<p>yml 파일이란?<br><a href="https://ko.wikipedia.org/wiki/YAML" rel="external nofollow noopener noreferrer" target="_blank">위키백과:YAML</a>. 일단은 ‘사람이 쉽게 읽을 수 있는’ 데이터 직렬화 양식 이라고 한다…<br>JSON 과 유사하지만 bracket 대신 줄바꿈과 들여쓰기로 표현한다고 보면 얼추 정확하다.</p>
+</blockquote>
+<p>가령 theme/clean-blog 테마를 적용한다면</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># @file &#123;root&#125;/_config.yml</span></div><div class="line"></div><div class="line">theme: clean-blog</div></pre></td></tr></table></figure>
+<p>가 된다.</p>
+<p>현재 다운로드 되어 있는 테마는 다음과 같다.</p>
+<p>clean-blog 의 경우 약간 커스터마이징을 해서 clean-blog-custom 으로 리네임해둔 상태다.</p>
+<ul>
+<li><a href="https://github.com/klugjo/hexo-theme-clean-blog" rel="external nofollow noopener noreferrer" target="_blank">clean-blog</a> <a href="http://www.codeblocq.com/assets/projects/hexo-theme-clean-blog/" rel="external nofollow noopener noreferrer" target="_blank">미리보기</a></li>
+<li><a href="https://github.com/ppoffice/hexo-theme-hueman" rel="external nofollow noopener noreferrer" target="_blank">hueman</a> <a href="https://ppoffice.github.io/hexo-theme-hueman/" rel="external nofollow noopener noreferrer" target="_blank">미리보기</a></li>
+</ul>
+<p>더 많은 테마는 다음 링크에 있다.<br><a href="https://hexo.io/themes/" rel="external nofollow noopener noreferrer" target="_blank">https://hexo.io/themes/</a></p>
+<h2 id="Writing"><a href="#Writing" class="headerlink" title="Writing"></a>Writing</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new [제목]</div></pre></td></tr></table></figure>
+<p>실행 후에는 {root}/source/_post/ 아래에 글제목.md 파일이 생성된다.</p>
+<p>문법은 <a href="http://daringfireball.net/projects/markdown/" rel="external nofollow noopener noreferrer" target="_blank">마크다운</a> 문법이고, wiki 등에서 쓰는 문법과 비슷하다.</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;Installation&quot;&gt;&lt;a href=&quot;#Installation&quot; class=&quot;headerlink&quot; title=&quot;Installation&quot;&gt;&lt;/a&gt;Installation&lt;/h2&gt;&lt;figure class=&quot;highlight sh&quot;&gt;&lt;tab
+    
+    </summary>
+    
+    
+      <category term="document" scheme="https://CSS-Org.github.io/tags/document/"/>
+    
+      <category term="start" scheme="https://CSS-Org.github.io/tags/start/"/>
+    
+      <category term="writing" scheme="https://CSS-Org.github.io/tags/writing/"/>
+    
+      <category term="manual" scheme="https://CSS-Org.github.io/tags/manual/"/>
+    
+  </entry>
+  
+</feed>

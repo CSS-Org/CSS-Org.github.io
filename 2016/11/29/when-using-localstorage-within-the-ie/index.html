@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <meta name="description" content="ie에서 localstorage 사용기">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="ie에서 localstorage 사용할 때 유의점">
+<meta property="og:url" content="https://CSS-Org.github.io/2016/11/29/when-using-localstorage-within-the-ie/">
+<meta property="og:site_name" content="CS Tech">
+<meta property="og:description" content="ie에서 localstorage 사용기">
+<meta property="og:image" content="https://CSS-Org.github.io/images/learncomputer-programing.jpg">
+<meta property="og:updated_time" content="2016-11-29T08:17:31.541Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ie에서 localstorage 사용할 때 유의점">
+<meta name="twitter:description" content="ie에서 localstorage 사용기">
+<meta name="twitter:image" content="https://CSS-Org.github.io/images/learncomputer-programing.jpg">
+    <meta name="og:image:width" content="200">
+    <meta name="og:image:height" content="298">
+
+    <link rel="canonical" href="https://CSS-Org.github.io/2016/11/29/when-using-localstorage-within-the-ie/">
+    <link rel="alternate" href="https://CSS-Org.github.io/atom.xml" title="CS Tech">
+
+    <!-- Title -->
+    
+    <title>ie에서 localstorage 사용할 때 유의점 - CS Tech</title>
+    <link href="/css/highlight.css" rel="stylesheet">
+
+    <!-- Bootstrap Core CSS -->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet">
+
+    <!-- Google Analytics -->
+    
+
+</head>
+
+<body>
+
+    <!-- Menu -->
+    <!-- 상단 메뉴 -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">CS Tech</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                
+                    <li>
+                        <a href="/">
+                            
+                                Home
+                            
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/archives">
+                            
+                                Archives
+                            
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/atom.xml">
+                            
+                                RSS
+                            
+                        </a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+</nav>
+
+    <!-- Main Content -->
+    <!-- Page Header -->
+<!-- Set your background image for this header in your post front-matter: cover -->
+
+<header class="intro-header" style="background-image: url('/img/logo.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>ie에서 localstorage 사용할 때 유의점</h1>
+                    
+                    <h2 class="post-subheading">
+                        localstorage 삽질 이야기
+                    </h2>
+                    
+                    <span class="meta">
+                        <!-- Date and Author -->
+                        
+                            
+                            Posted by <a href="mailto:">cacacoo(권형신)</a> on
+                            
+                        
+                        2016-11-29
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Tags and categories -->
+           
+                <div class="col-lg-4 col-lg-offset-2 col-md-5 col-md-offset-1 post-tags">
+                    
+                        <a href="/tags/ie/">#ie</a> <a href="/tags/localstorage/">#localstorage</a>
+                    
+                </div>
+                <div class="col-lg-4 col-md-5 post-categories">
+                    
+                        <a href="/categories/tech/">Tech</a>
+                    
+                </div>
+            
+
+            <!-- Gallery -->
+            
+
+            <!-- Post Main Content -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+
+                <div class="well">
+                  <strong>목차</strong>
+                  <ol class="content-index"><li class="content-index-item content-index-level-3"><a class="content-index-link" href="#갑자기-왜"><span class="content-index-text">갑자기 왜</span></a></li><li class="content-index-item content-index-level-3"><a class="content-index-link" href="#두-창에서-Local-Storage-key값의-동기화-문제"><span class="content-index-text">두 창에서 Local Storage key값의 동기화 문제</span></a></li><li class="content-index-item content-index-level-3"><a class="content-index-link" href="#어떻게-해야할까"><span class="content-index-text">어떻게 해야할까</span></a></li><li class="content-index-item content-index-level-3"><a class="content-index-link" href="#결론"><span class="content-index-text">결론</span></a></li></ol>
+                </div>
+                <h3 id="갑자기-왜"><a href="#갑자기-왜" class="headerlink" title="갑자기 왜"></a>갑자기 왜</h3><p>로컬 스토리지를 사용해서, 페이지의 Form 값을 임시로 저장하는 기능을 개발했다.</p>
+<p>Chrome에서 만들어 테스트하고 배포를 하려던 참에,</p>
+<p>혹시나해서 IE(10,Edge 모드)에서 테스트하려고 보니까 왠일인지 동작하지 않았다.</p>
+<h3 id="두-창에서-Local-Storage-key값의-동기화-문제"><a href="#두-창에서-Local-Storage-key값의-동기화-문제" class="headerlink" title="두 창에서 Local Storage key값의 동기화 문제"></a>두 창에서 Local Storage key값의 동기화 문제</h3><p>Form은 팝업이였고, Form 값이 변경되면 로컬스토리지에 저장된 후</p>
+<p>다른 창에 떠있는 개인 페이지에서 임시저장된 Form 팝업을 링크하거나 삭제하는 식의 기능이였다.</p>
+<p>문제는 서로 다른 두 창에 대해서, 로컬스토리지의 key값이 동기화 되지 않는데서 시작했다.</p>
+<p>첫 번째 창에서 Storage에 저장하면, 두번째 창에서는 Storage를 읽고</p>
+<p>변경된 사항에 대해서 표현되어야 했으나 도무지 갱신된 key값을 다른 창에서 찾을 수가 없었다.</p>
+<p>예를 들어서, 두 창을 열어둔 후에, 첫번째 창에서 다음과 같이 localStorage에 Item을 추가해보자.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> ls = <span class="built_in">window</span>.localStorage;</div><div class="line"></div><div class="line">ls.setItem(<span class="string">'party'</span>, <span class="string">'yeah!'</span>);</div></pre></td></tr></table></figure>
+<p>헌데 두번째 창에서 localStorage에 저장된 key값을 확인해보면, 첫번째 창과 key값이 동일하지 않다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> ls2 = <span class="built_in">window</span>.localStorage;</div><div class="line"></div><div class="line"><span class="built_in">Object</span>.keys(ls2);</div></pre></td></tr></table></figure>
+<h3 id="어떻게-해야할까"><a href="#어떻게-해야할까" class="headerlink" title="어떻게 해야할까"></a>어떻게 해야할까</h3><p>사용자 PC마다 localStorage를 얼마나 사용하고 있는지 알 수 없었기에,</p>
+<p>키값으로 미리 데이터를 필터링해서 사용하지 않으면</p>
+<p>어떤 성능 상 이슈가 발생할 지 알 수 없는 상황이였다.</p>
+<p>localStorage를 이것 저것 사용해보다가 한가지 대안이라고 하기에도 민망한 방법을 발견했는데</p>
+<p><strong> 창이 다르더라도 getItem(key)를 통해서 바로 호출하면, 데이터를 가져올 수 있었다 </strong></p>
+<p>ls2 내부를 아무리 찾아봐도 없던 ‘party’ 데이터가 key값으로 바로 호출하면 보인다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ls2.getItem(<span class="string">'party'</span>);</div></pre></td></tr></table></figure>
+<p>이렇게해서, IE인 경우에, 서로 다른 창에서 localStorage를 사용할 경우, 동기화된 Key값을 얻기 위해</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>(browserDetector.detectWindow(<span class="built_in">window</span>).browser === <span class="string">'ie'</span>) &#123;</div><div class="line">	keys = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">		<span class="keyword">let</span> idx = <span class="number">0</span>;</div><div class="line">		<span class="keyword">let</span> result = [];</div><div class="line">		<span class="keyword">while</span> (l.key(idx)) &#123;</div><div class="line">			result.push(l.key(idx));</div><div class="line">			idx++;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> result;</div><div class="line">	&#125;;</div><div class="line">	<span class="keyword">return</span> keys();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>localStorage에 존재하지 않는 index를 요청할 때, null을 리턴하는 것을 이용해서</p>
+<p>다음과 같이 key값을 빼서 사용하게 되었다.</p>
+<h3 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h3><p>개발 환경과 사용자 환경에 대한 테스트의 중요성을 다시 한번 느낀다.</p>
+<p>잘되겠지 싶은 것도 반드시 사용자 환경에서 다시 한번 테스트 해봐야 겠다.</p>
+
+                
+            </div>
+
+            <!-- Comments -->
+            
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <hr>
+    <h3>댓글:</h3>
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+                </div>
+            
+        </div>
+    </div>
+</article>
+
+    <!-- Footer -->
+    <hr>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    
+
+                    
+
+                    
+                        <li>
+                            <a href="https://github.com/CSS-Org" target="_blank" rel="external nofollow noopener noreferrer">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    
+
+                    
+
+                    
+                        <li>
+                            <a href="http://gitlab.coupang.net/groups/phiphi" target="_blank" rel="external nofollow noopener noreferrer">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-gitlab fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    
+
+                    
+                        <li>
+                            <a href="mailto:phiphi@coupang.com" target="_blank" rel="external nofollow noopener noreferrer">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+                <p class="copyright text-muted">Original Theme <a target="_blank" href="http://startbootstrap.com/template-overviews/clean-blog/" rel="external nofollow noopener noreferrer">Clean Blog</a> from <a href="http://startbootstrap.com/" target="_blank" rel="external nofollow noopener noreferrer">Start Bootstrap</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+    <!-- After footer scripts -->
+    <!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Bootstrap -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Disqus Comments -->
+
+<script type="text/javascript">
+    var disqus_shortname = 'raopjs';
+
+    (function(){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <meta name="description" content="es6의 class 문법에는 private data를 직접 지정할 수 있는 기능이 제공되지 않는다.때문에 private data로 쓰고자 하는 변수는 우회적으로 관리하여야 하는데, 그 방법들을 소개한다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="ES6 Class에서 private member를 정의하는 방법">
+<meta property="og:url" content="https://CSS-Org.github.io/2016/11/27/how-to-make-private-member/">
+<meta property="og:site_name" content="CS Tech">
+<meta property="og:description" content="es6의 class 문법에는 private data를 직접 지정할 수 있는 기능이 제공되지 않는다.때문에 private data로 쓰고자 하는 변수는 우회적으로 관리하여야 하는데, 그 방법들을 소개한다.">
+<meta property="og:image" content="https://CSS-Org.github.io/img/bart.png">
+<meta property="og:updated_time" content="2016-11-29T08:17:31.531Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ES6 Class에서 private member를 정의하는 방법">
+<meta name="twitter:description" content="es6의 class 문법에는 private data를 직접 지정할 수 있는 기능이 제공되지 않는다.때문에 private data로 쓰고자 하는 변수는 우회적으로 관리하여야 하는데, 그 방법들을 소개한다.">
+<meta name="twitter:image" content="https://CSS-Org.github.io/img/bart.png">
+    <meta name="og:image:width" content="200">
+    <meta name="og:image:height" content="298">
+
+    <link rel="canonical" href="https://CSS-Org.github.io/2016/11/27/how-to-make-private-member/">
+    <link rel="alternate" href="https://CSS-Org.github.io/atom.xml" title="CS Tech">
+
+    <!-- Title -->
+    
+    <title>ES6 Class에서 private member를 정의하는 방법 - CS Tech</title>
+    <link href="/css/highlight.css" rel="stylesheet">
+
+    <!-- Bootstrap Core CSS -->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet">
+
+    <!-- Google Analytics -->
+    
+
+</head>
+
+<body>
+
+    <!-- Menu -->
+    <!-- 상단 메뉴 -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">CS Tech</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                
+                    <li>
+                        <a href="/">
+                            
+                                Home
+                            
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/archives">
+                            
+                                Archives
+                            
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/atom.xml">
+                            
+                                RSS
+                            
+                        </a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+</nav>
+
+    <!-- Main Content -->
+    <!-- Page Header -->
+<!-- Set your background image for this header in your post front-matter: cover -->
+
+<header class="intro-header" style="background-image: url('/img/home-bg.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>ES6 Class에서 private member를 정의하는 방법</h1>
+                    
+                    <h2 class="post-subheading">
+                        자바스크립트를 어떻게든 더 잘 써보려는 몸부림
+                    </h2>
+                    
+                    <span class="meta">
+                        <!-- Date and Author -->
+                        
+                            
+                            Posted by <a href="mailto:power4ce@gmail.com" rel="external nofollow noopener noreferrer" target="_blank">gomugom(정재남)</a> on
+                            
+                        
+                        2016-11-27
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Tags and categories -->
+           
+                <div class="col-lg-4 col-lg-offset-2 col-md-5 col-md-offset-1 post-tags">
+                    
+                        <a href="/tags/es6/">#es6</a> <a href="/tags/javascript/">#javascript</a> <a href="/tags/class/">#class</a>
+                    
+                </div>
+                <div class="col-lg-4 col-md-5 post-categories">
+                    
+                </div>
+            
+
+            <!-- Gallery -->
+            
+
+            <!-- Post Main Content -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+
+                <div class="well">
+                  <strong>목차</strong>
+                  <ol class="content-index"><li class="content-index-item content-index-level-2"><a class="content-index-link" href="#1-naming-convention"><span class="content-index-text">1. naming convention _</span></a></li><li class="content-index-item content-index-level-2"><a class="content-index-link" href="#2-constructor-내부에서-할당"><span class="content-index-text">2. constructor 내부에서 할당</span></a></li><li class="content-index-item content-index-level-2"><a class="content-index-link" href="#3-Symbol-활용"><span class="content-index-text">3. Symbol 활용</span></a></li><li class="content-index-item content-index-level-2"><a class="content-index-link" href="#4-WeakMap-활용"><span class="content-index-text">4. WeakMap 활용</span></a></li><li class="content-index-item content-index-level-2"><a class="content-index-link" href="#결론"><span class="content-index-text">결론</span></a></li></ol>
+                </div>
+                <p>es6의 class 문법에는 private data를 직접 지정할 수 있는 기능이 제공되지 않는다.<br>때문에 private data로 쓰고자 하는 변수는 우회적으로 관리하여야 하는데, 그 방법들을 소개한다.</p>
+<a id="more"></a>
+<hr>
+<h2 id="1-naming-convention"><a href="#1-naming-convention" class="headerlink" title="1. naming convention _"></a>1. naming convention <code>_</code></h2><p>변수에 접두어 <code>_</code>를 붙이면 private data로 간주하기로 하는 규칙을 정하는 방법.</p>
+<p>실질적인 접근제한은 전혀 이뤄지지 않는다.</p>
+<h2 id="2-constructor-내부에서-할당"><a href="#2-constructor-내부에서-할당" class="headerlink" title="2. constructor 내부에서 할당"></a>2. <code>constructor</code> 내부에서 할당</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Count</span> </span>&#123;</div><div class="line">  <span class="keyword">constructor</span>(_count) &#123;</div><div class="line">    <span class="keyword">const</span> methods = &#123;</div><div class="line">      inc() &#123; _count += <span class="number">1</span>; <span class="keyword">return</span> _count; &#125;,</div><div class="line">      dec() &#123; _count -= <span class="number">1</span>; <span class="keyword">return</span> _count; &#125;,</div><div class="line">      getScore() &#123; <span class="keyword">return</span> _count; &#125;,</div><div class="line">      get score() &#123; <span class="keyword">return</span> _count; &#125;,</div><div class="line">      set score(v) &#123; _count = v; &#125;</div><div class="line">    &#125;;</div><div class="line">    <span class="built_in">Object</span>.assign(<span class="keyword">this</span>, methods);</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">const</span> test = <span class="keyword">new</span> Count(<span class="number">0</span>);</div><div class="line"><span class="built_in">console</span>.log(test.inc());        <span class="comment">// 1</span></div><div class="line"><span class="built_in">console</span>.log(test.inc());        <span class="comment">// 2</span></div><div class="line"><span class="built_in">console</span>.log(test.dec());        <span class="comment">// 1</span></div><div class="line"><span class="built_in">console</span>.log(test.getScore());   <span class="comment">// 1</span></div></pre></td></tr></table></figure>
+<p>이 방법은 constructor 내부에서만 접근 가능한 변수를 사용하는 모든 메소드를 constructor에서 정의하고,<br>이를 그대로 인스턴스에 반영하기 위해 <code>Object.assign</code> 메소드를 활용한다.<br>이로써 <code>_count</code> 변수는 값을 외부에 노출하지 않고 오직 내부에서만 접근이 가능해진다.</p>
+<p>그러나 이는 메소드를 인스턴스에 직접 할당하는 것이므로,<br>메소드를 상속받아 사용하겠다는 Class의 본질적인 사용 의미를 무색케 만드는 셈이다.<br>또한 delete로 메소드를 삭제할 수도 있고, 메소드를 override가 아닌 완전한 대체를 할 수도 있다.</p>
+<p>뿐만 아니라  <code>getter/setter</code>는 별도의 데이터(<code>this.score</code>)에 접근하는 등의 문제도 있다<br>(원인은 모르겠다. 아시는 분은 댓글 부탁드립니다).</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">console</span>.log(test.score);         <span class="comment">// 0</span></div><div class="line">test.score = <span class="number">20</span>;</div><div class="line"><span class="built_in">console</span>.log(test.score);         <span class="comment">// 20</span></div><div class="line"><span class="built_in">console</span>.log(test.getScore());    <span class="comment">// 1</span></div></pre></td></tr></table></figure>
+<p>한편 method를 모두 <code>this.constructor.prototype</code>에 할당한다면 _count 변수를 공통으로 사용하는 결과가 되므로,<br>각 인스턴스들의 독립성이 보장되지 않게 되어 마찬가지로 Class를 사용하는 의미가 없다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Count</span> </span>&#123;</div><div class="line">  <span class="keyword">constructor</span>(_count) &#123;</div><div class="line">    <span class="keyword">const</span> methods = &#123;</div><div class="line">      inc() &#123; _count += <span class="number">1</span>; <span class="keyword">return</span> _count; &#125;,</div><div class="line">      dec() &#123; _count -= <span class="number">1</span>; <span class="keyword">return</span> _count; &#125;,</div><div class="line">      getScore() &#123; <span class="keyword">return</span> _count; &#125;,</div><div class="line">      get score() &#123; <span class="keyword">return</span> _count; &#125;,</div><div class="line">      set score(v) &#123; _count = v; &#125;</div><div class="line">    &#125;;</div><div class="line">    <span class="built_in">Object</span>.assign(<span class="keyword">this</span>.constructor.prototype, methods);</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">const</span> test1 = <span class="keyword">new</span> Count(<span class="number">0</span>);</div><div class="line"><span class="keyword">const</span> test2 = <span class="keyword">new</span> Count(<span class="number">0</span>);</div><div class="line"><span class="built_in">console</span>.log(test1.inc());        <span class="comment">// 1</span></div><div class="line"><span class="built_in">console</span>.log(test1.inc());        <span class="comment">// 2</span></div><div class="line"><span class="built_in">console</span>.log(test1.getScore());   <span class="comment">// 2</span></div><div class="line"><span class="built_in">console</span>.log(test2.getScore());   <span class="comment">// 2</span></div></pre></td></tr></table></figure>
+<p>이래저래 변수보호를 위해 잃는 것이 너무 많은 방법. 비추천.</p>
+<h2 id="3-Symbol-활용"><a href="#3-Symbol-활용" class="headerlink" title="3. Symbol 활용"></a>3. <code>Symbol</code> 활용</h2><p>즉시실행함수 혹은 블록 스코프 내에서 심볼을 통해 접근을 제한하는 방법이다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> Count = <span class="function">(<span class="params">(</span>) =&gt;</span> &#123;</div><div class="line">  <span class="keyword">const</span> count = <span class="built_in">Symbol</span>(<span class="string">'COUNT'</span>);</div><div class="line">  <span class="class"><span class="keyword">class</span> <span class="title">Count</span> </span>&#123;</div><div class="line">    <span class="keyword">constructor</span>() &#123;</div><div class="line">      <span class="keyword">this</span>[count] = <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line">    inc() &#123;</div><div class="line">      <span class="keyword">return</span> ++<span class="keyword">this</span>[count];</div><div class="line">    &#125;</div><div class="line">    dec() &#123;</div><div class="line">      <span class="keyword">return</span> --<span class="keyword">this</span>[count];</div><div class="line">    &#125;</div><div class="line">    get score() &#123; <span class="keyword">return</span> <span class="keyword">this</span>[count]; &#125;</div><div class="line">    set score(n) &#123; <span class="keyword">this</span>[count] = n; &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> Count;</div><div class="line">&#125;)();</div><div class="line"><span class="keyword">const</span> test = <span class="keyword">new</span> Count();</div><div class="line"><span class="built_in">console</span>.log(test.inc());   <span class="comment">// 1</span></div><div class="line"><span class="built_in">console</span>.log(test.inc());   <span class="comment">// 2</span></div><div class="line"><span class="built_in">console</span>.log(test.dec());   <span class="comment">// 1</span></div><div class="line"><span class="built_in">console</span>.log(test.score);   <span class="comment">// 1</span></div><div class="line">test.score = <span class="number">10</span>;</div><div class="line"><span class="built_in">console</span>.log(test.score);   <span class="comment">// 10</span></div><div class="line"><span class="built_in">console</span>.log(test.inc());   <span class="comment">// 11</span></div></pre></td></tr></table></figure>
+<p>이 방법은 Symbol의 접근 루트가 제한적이라서 가능한 방법이지만, 접근 루트가 아예 없는 것은 아니다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> testSymbol = <span class="built_in">Object</span>.getOwnPropertySymbols(test)[<span class="number">0</span>];</div><div class="line">test[testSymbol] = <span class="number">20</span>;</div><div class="line"><span class="built_in">console</span>.log(test.score);    <span class="comment">// 20</span></div><div class="line"><span class="built_in">console</span>.log(test.inc());    <span class="comment">// 21</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> testSymbol = <span class="built_in">Reflect</span>.ownKeys(test)[<span class="number">0</span>];</div><div class="line">test[testSymbol] = <span class="number">20</span>;</div><div class="line"><span class="built_in">console</span>.log(test.score);    <span class="comment">// 20</span></div><div class="line"><span class="built_in">console</span>.log(test.dec());    <span class="comment">// 19</span></div></pre></td></tr></table></figure>
+<p>비록 완벽한 private member가 되진 않지만, 위와 같은 몇 가지 접근을 제외하고는 다른 모든 접근으로부터는 보호되므로<br>절대적인 보호가 필요한 경우가 아닌 한 적절하게 활용하기 좋은 방법이라 하겠다.</p>
+<h2 id="4-WeakMap-활용"><a href="#4-WeakMap-활용" class="headerlink" title="4. WeakMap 활용"></a>4. <code>WeakMap</code> 활용</h2><p>weakMap의 key에는 오직 참조형 데이터만을 지정할 수 있으며, 이 키값을 정확히 알고 있을 때에만<br>해당 프로퍼티의 값을 받아올 수 있다는 점을 이용한 방법이다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> Count = <span class="function">(<span class="params">(</span>) =&gt;</span> &#123;</div><div class="line">  <span class="keyword">const</span> count = &#123;<span class="attr">COUNT</span>: <span class="string">'COUNT'</span>&#125;;</div><div class="line">  <span class="class"><span class="keyword">class</span> <span class="title">Count</span> </span>&#123;</div><div class="line">    <span class="keyword">constructor</span>() &#123;</div><div class="line">      <span class="keyword">this</span>.map = <span class="keyword">new</span> <span class="built_in">WeakMap</span>([[count, <span class="number">0</span>]]);</div><div class="line">    &#125;</div><div class="line">    inc() &#123;</div><div class="line">      <span class="keyword">return</span> <span class="keyword">this</span>.map.set(count, <span class="keyword">this</span>.map.get(count) + <span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line">    dec() &#123;</div><div class="line">      <span class="keyword">return</span> <span class="keyword">this</span>.map.set(count, <span class="keyword">this</span>.map.get(count) - <span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line">    get score() &#123; <span class="keyword">return</span> <span class="keyword">this</span>.map.get(count); &#125;</div><div class="line">    set score(n) &#123; <span class="keyword">this</span>.map.set(count, n); &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> Count;</div><div class="line">&#125;)();</div><div class="line"><span class="keyword">const</span> test = <span class="keyword">new</span> Count();</div><div class="line"><span class="built_in">console</span>.log(test.inc());    <span class="comment">// WeakMap &#123;Object &#123;COUNT: "COUNT"&#125; =&gt; 1&#125;</span></div><div class="line"><span class="built_in">console</span>.log(test.inc());    <span class="comment">// WeakMap &#123;Object &#123;COUNT: "COUNT"&#125; =&gt; 2&#125;</span></div><div class="line"><span class="built_in">console</span>.log(test.dec());    <span class="comment">// WeakMap &#123;Object &#123;COUNT: "COUNT"&#125; =&gt; 1&#125;</span></div><div class="line"><span class="built_in">console</span>.log(test.score);    <span class="comment">// 1</span></div><div class="line">test.score = <span class="number">10</span>;</div><div class="line"><span class="built_in">console</span>.log(test.score);    <span class="comment">// 10</span></div><div class="line"><span class="built_in">console</span>.log(test.dec());    <span class="comment">// WeakMap &#123;Object &#123;COUNT: "COUNT"&#125; =&gt; 9&#125;</span></div></pre></td></tr></table></figure>
+<p>WeakMap 활용법은 private member를 구현하는 가장 완벽한 방법이지만,<br>오직 WeakMap용 method만을 이용할 수 있다는 단점이 있다.</p>
+<h2 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h2><p>ES6 Class 내부에서 private 변수를 할당할 명시적인 방법이 없어, 이를 우회적으로 구현하기 위한 다양한 방법을 살펴보았다.<br>무엇 하나 ‘이거다’ 싶은 방법은 없지만, Symbol, WeakMap을 이용한 방법은 아쉬운 대로 써먹어볼 만 할 것 같다.</p>
+<p>참고 : <a href="http://exploringjs.com/es6/ch_classes.html#sec_private-data-for-classes" rel="external nofollow noopener noreferrer" target="_blank">Exploring ES6</a></p>
+
+                
+            </div>
+
+            <!-- Comments -->
+            
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <hr>
+    <h3>댓글:</h3>
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+                </div>
+            
+        </div>
+    </div>
+</article>
+
+    <!-- Footer -->
+    <hr>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    
+
+                    
+
+                    
+                        <li>
+                            <a href="https://github.com/CSS-Org" target="_blank" rel="external nofollow noopener noreferrer">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    
+
+                    
+
+                    
+                        <li>
+                            <a href="http://gitlab.coupang.net/groups/phiphi" target="_blank" rel="external nofollow noopener noreferrer">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-gitlab fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    
+
+                    
+                        <li>
+                            <a href="mailto:phiphi@coupang.com" target="_blank" rel="external nofollow noopener noreferrer">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+                <p class="copyright text-muted">Original Theme <a target="_blank" href="http://startbootstrap.com/template-overviews/clean-blog/" rel="external nofollow noopener noreferrer">Clean Blog</a> from <a href="http://startbootstrap.com/" target="_blank" rel="external nofollow noopener noreferrer">Start Bootstrap</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+    <!-- After footer scripts -->
+    <!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Bootstrap -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Disqus Comments -->
+
+<script type="text/javascript">
+    var disqus_shortname = 'raopjs';
+
+    (function(){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+</body>
+
+</html>
